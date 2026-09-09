@@ -1,3 +1,9 @@
+Tên thành viên:
+-Bùi Khải Triệu
+-Ngô Phạm Nguyệt Minh
+-Hồ Lê Hoàng Nhật
+-Chu Bảo Khánh
+-Đặng Đăng Khoa
 https://docs.google.com/document/d/1CPT4zTlAQEyt7xDQGggoXAK-JpEAZc7t/edit BẠN HÃY TÔNG HỢP CHO TÔI TẤT CẢ CÁC THUỘC TÍNH, TÍNH NĂNG, VÀ NÔI DUNG CỦA TỪNG TÍNH NĂNG
 
 Mình có thể tổng hợp cho bạn theo dạng “Tính năng → Thuộc tính → Chức năng → Nội dung/luồng xử lý → Dữ liệu đầu vào/đầu ra”, nhưng hiện tại mình chưa đọc được nội dung bên trong Google Docs từ đường link bạn gửi.
