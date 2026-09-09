@@ -1,8 +1,8 @@
 Tên thành viên:
--Bùi Khải Triệu
--Ngô Phạm Nguyệt Minh
--Hồ Lê Hoàng Nhật
--Chu Bảo Khánh
+-Bùi Khải Triệu - QE210228
+-Ngô Phạm Nguyệt Minh - QE210021
+-Hồ Lê Hoàng Nhật - QE200049
+-Chu Bảo Khánh - HE171093
 -Đặng Đăng Khoa
 https://docs.google.com/document/d/1CPT4zTlAQEyt7xDQGggoXAK-JpEAZc7t/edit BẠN HÃY TÔNG HỢP CHO TÔI TẤT CẢ CÁC THUỘC TÍNH, TÍNH NĂNG, VÀ NÔI DUNG CỦA TỪNG TÍNH NĂNG
 
