@@ -1,0 +1,4 @@
+id,username,password, fullName, email, role, status 
+U001, admin,123456, System Admin, admin@stadium.com, ADMIN, ACTIVE 
+U002, seller1,123456, Nguyen Van Seller, seller@stadium.com, SELLER, ACTIVE 
+U003, buyer1, 123456, Tran Van Buyer, buyer@gmail.com, BUYER, ACTIVE 
