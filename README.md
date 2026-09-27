@@ -13,7 +13,7 @@ This repository is used by Group 3 for source-code management, collaboration, an
 | Ngô Phạm Nguyệt Minh | QE210021 |
 | Hồ Lê Hoàng Nhật | QE200049 |
 | Chu Bảo Khánh | HE171093 |
-| Đặng Đăng Khoa | — |
+| Đặng Đăng Khoa | QE200021 |
 
 ## 🎯 System Overview
 
