@@ -1,0 +1,382 @@
+chào bạn, bạn là một giảng viên IT bạn hãy cho tôi biết MVC là gì, và nó có các ưu nhược điểm gì, lý do tại sao phải dùng đến nó và nếu không dùng nó thì sao. bạn hãy giải thích chi tiết cho tôi và nêu cho tôi 1 ví dụ.
+
+Chào bạn! Rất vui được đồng hành cùng bạn trong môn Học kiến trúc phần mềm hôm nay.
+
+Mô hình MVC (Model - View - Controller) là một trong những mẫu thiết kế kiến trúc (Architectural Pattern) kinh điển và nền tảng nhất trong lập trình web và phần mềm. Để dễ hình dung, bạn hãy tưởng tượng MVC giống như mô hình hoạt động của một nhà hàng:
+
+Model (Dữ liệu & Nghiệp vụ): Là Đầu bếp/Bếp chính. Nơi xử lý dữ liệu, tính toán logic và giao tiếp với cơ sở dữ liệu. Đầu bếp không quan tâm khách hàng ngồi ở đâu, ăn bằng đĩa gì, chỉ tập trung nấu đúng món ăn được yêu cầu.
+
+View (Giao diện): Là Món ăn đã trang trí trên đĩa. Nơi hiển thị kết quả cho người dùng (HTML, CSS, UI). View không quan tâm dữ liệu được lấy từ đâu hay tính toán thế nào, chỉ có nhiệm vụ hiển thị sao cho đẹp mắt.
+
+Controller (Bộ điều khiển): Là Bồi bàn. Nơi tiếp nhận yêu cầu từ người dùng (khách gọi món), gửi thông tin xuống Model (báo đầu bếp làm), lấy kết quả từ Model và trả về cho View (mang món ăn ra cho khách).
+
+1. Luồng hoạt động của MVC
+Plaintext
+[Người dùng] ──(1. Gửi yêu cầu/Request)──> [Controller]
+                                               │
+                                       (2. Xử lý logic)
+                                               ▼
+                                            [Model]
+                                               │
+                                      (3. Trả về dữ liệu)
+                                               ▼
+[Người dùng] <──(5. Hiển thị UI)─── [View] <───┤
+User gửi yêu cầu (ví dụ: bấm nút "Xem danh sách sản phẩm").
+
+Controller tiếp nhận yêu cầu, phân tích và gọi Model.
+
+Model truy vấn cơ sở dữ liệu, lấy danh sách sản phẩm và trả về cho Controller.
+
+Controller chuyển danh sách dữ liệu này sang cho View.
+
+View chèn dữ liệu vào giao diện HTML/CSS và hiển thị kết quả cho User.
+
+2. Lý do phải dùng MVC và "Nếu không dùng thì sao?"
+Nếu KHÔNG dùng MVC:
+Thời kỳ đầu của lập trình web (ví dụ: file PHP thuần hay ASP cổ điển), lập trình viên thường viết mọi thứ vào chung một file:
+
+Vừa viết câu lệnh SQL lấy dữ liệu (SELECT * FROM users).
+
+Vừa viết logic kiểm tra (if/else).
+
+Vừa viết code giao diện (``, `
+
+, 
+
+`).
+
+Hậu quả (Anti-pattern "Spaghetti Code"):
+
+Code chéo rối rối: File code kéo dài hàng nghìn dòng, cực kỳ khó đọc.
+
+Xung đột khi làm việc nhóm: Lập trình viên Backend và Frontend sửa chung trên một file, rất dễ đè code của nhau.
+
+Khó bảo trì và nâng cấp: Muốn đổi giao diện phải vào tận nơi có chứa logic xử lý để sửa, chỉ cần gõ nhầm một dấu phẩy là sập cả hệ thống.
+
+Không tái sử dụng được code: Nếu muốn lấy danh sách sản phẩm ở một trang khác, bạn lại phải copy-paste đoạn code SQL đó sang file mới.
+
+Lý do BẮT BUỘC nên dùng MVC:
+MVC giải quyết triệt để vấn đề trên nhờ nguyên lý Separation of Concerns (Phân tách mối bận tâm). Mỗi phần đảm nhận đúng 1 trách nhiệm duy nhất, giúp hệ thống hoạt động ngăn nắp, mạch lạc và dễ mở rộng.
+
+3. Ưu điểm và Nhược điểm của MVC
+Ưu điểm:
+Độc lập và Phân công công việc dễ dàng: Frontend Developer chỉ làm việc với View; Backend Developer tập trung viết Model và Controller. Hai bên có thể làm việc song song mà không sợ đè code lên nhau.
+
+Dễ bảo trì và nâng cấp: Muốn thay đổi giao diện? Bạn chỉ cần sửa View mà không chạm tới 1 dòng logic nào ở Model/Controller.
+
+Khả năng tái sử dụng cao: Một Model có thể phục vụ dữ liệu cho nhiều View khác nhau (ví dụ: hiển thị dạng Web, trả về JSON cho Mobile App).
+
+Thích hợp cho dự án lớn: Giúp cấu trúc thư mục dự án gọn gàng, chuẩn hóa, tân binh vào dự án dễ đọc hiểu code.
+
+Nhược điểm:
+Phức tạp đối với dự án nhỏ: Với các trang web nhỏ (như trang landing page đơn giản), việc chia file theo chuẩn MVC làm tăng số lượng file không cần thiết, gây mất thời gian thiết lập ban đầu.
+
+Tốn thời gian học tập: Người mới học phải mất thời gian để hiểu luồng dữ liệu truyền qua lại giữa Controller, Model và View.
+
+4. Ví dụ thực tế: Chức năng "Đăng nhập" (Login)
+Dưới đây là cách tổ chức chức năng đăng nhập theo mô hình MVC (Code minh họa dạng mô phỏng tư duy):
+
+Model (UserModel.php) - Chỉ làm việc với Data & Database
+PHP
+class UserModel {
+    public function checkLogin(\(username,\)password) {
+        // Kết nối DB và kiểm tra xem tài khoản/mật khẩu có đúng không
+        \(sql = "SELECT * FROM users WHERE username = '\)username' AND password = '$password'";
+        \(result = mysqli_query(\)db, $sql);
+        
+        return $result ? true : false; // Trả về true/false
+    }
+}
+View (login_view.php) - Chỉ chứa giao diện HTML
+Đăng nhập
+
+$error"; ?>
+
+
+### **Controller (`AuthController.php`)** - Bồi bàn điều phối
+```php
+class AuthController {
+    public function handleLogin() {
+        // 1. Nhận dữ liệu từ View gửi lên
+        \(username =\)_POST['username'];
+        \(password =\)_POST['password'];
+
+        // 2. Gọi Model kiểm tra
+        $userModel = new UserModel();
+        \(isSuccess =\)userModel->checkLogin(\(username,\)password);
+
+        // 3. Quyết định trả về View nào
+        if ($isSuccess) {
+            include('dashboard_view.php'); // Đăng nhập đúng -> Sang trang quản trị
+        } else {
+            $error = "Tài khoản hoặc mật khẩu không chính xác!";
+            include('login_view.php');     // Đăng nhập sai -> Báo lỗi ở trang Login
+        }
+    }
+}
+Hy vọng bài giảng ngắn này giúp bạn nắm vững bản chất của kiến trúc MVC. Bạn có muốn chúng ta đi sâu hơn vào một Framework MVC cụ thể nào đó (như Laravel của PHP, Spring MVC của Java, hay Express/ASP.NET) không?
+
+tôi muốn hiểu rõ hơn, chi tiết hơn
+
+Rất tốt! Tinh thần muốn đào sâu đến tận cùng bản chất là tố chất quan trọng nhất của một kỹ sư phần mềm giỏi.
+
+Để giúp bạn nắm trọn vẹn 100% kiến trúc MVC, chúng ta sẽ không dừng lại ở định nghĩa bề nổi nữa. Chúng ta sẽ cùng nhau phân tích:
+
+Sự dịch chuyển từ Spaghetti Code sang MVC (nhìn trực diện vào nỗi đau của lập trình viên).
+
+Chi tiết từng thành phần (Model, View, Controller chứa cái gì và KHÔNG ĐƯỢC chứa cái gì).
+
+Luồng dữ liệu thực tế từng milisecond khi một request chạy qua hệ thống.
+
+So sánh mô hình MVC truyền thống (Server-Side) và MVC hiện đại (Client-Side / API).
+
+1. Mổ xẻ: Tại sao code truyền thống lại bị coi là "Thảm họa"?
+Hãy nhìn vào cách viết code Không dùng MVC (ví dụ file index.php cổ điển) dưới đây:
+
+PHP
+
+query("SELECT * FROM products WHERE stock > 0");
+
+// 3. LOGIC XỬ LÝ DỮ LIỆU
+$discount = 0.1; // Giảm giá 10%
+?>
+
+
+
+
+Danh sách sản phẩm
+SẢN PHẨM BÁN CHẠY
+fetch_assoc()): ?>
+
+VNĐ
+
+
+### Tại sao đoạn code trên lại nguy hiểm?
+* **Lỗi bảo mật:** Để lộ thông tin kết nối Database và câu lệnh SQL ngay tại file hiển thị giao diện.
+* **Vi phạm nguyên tắc DRY (Don't Repeat Yourself):** Nếu trang `detail.php` hoặc `cart.php` cũng cần câu lệnh kết nối database hay công thức tính giảm giá ($discount), bạn lại phải copy-paste đoạn code đó sang các file mới. Khi sửa giảm giá từ 10% lên 15%, bạn phải đi tìm từng file để sửa manual.
+* **Sự bất lực của Teamwork:** Anh Designer muốn sửa lại cái `
+thành
+
+để làm giao diện đẹp hơn, anh ấy buộc phải mở filelist_products.phpcó chứa code PHP/SQL. Chỉ cần gõ nhầm đè mất một dấu;` của PHP, toàn bộ trang web biến thành trang trắng (Fatal Error).
+
+2. Bóc tách chi tiết: Trách nhiệm khắt khe của từng mảnh ghép MVC
+Khi chuyển sang MVC, chúng ta đặt ra các "Ranh giới đỏ" nghiêm ngặt cho từng phần:
+
+                  ┌───────────────────────────────┐
+                  │          CONTROLLER           │
+                  │ - Nhận Request                │
+                  │ - Điều phối Luồng             │
+                  │ - Kiểm tra Validation cơ bản  │
+                  └──────────────┬────────────────┘
+                                 │
+                 ┌───────────────┴───────────────┐
+                 │                               │
+                 ▼                               ▼
+  ┌──────────────────────────────┐ ┌──────────────────────────────┐
+  │            MODEL             │ │             VIEW             │
+  │ - Chứa Logic nghiệp vụ (Core)│ │ - Chứa HTML/CSS/JS           │
+  │ - Truy vấn Database          │ │ - Nhận Data từ Controller    │
+  │ - Đóng gói dữ liệu (Entity)  │ │ - KHÔNG chứa logic nghiệp vụ │
+  └──────────────────────────────┘ └──────────────────────────────┘
+A. Model (Nơi tập trung "Tri thức" của ứng dụng)
+Model KHÔNG CHỈ là nơi viết câu lệnh SQL. Model đại diện cho toàn bộ quy tắc nghiệp vụ (Business Logic) của bài toán.
+
+Nhiệm vụ:
+
+Truy vấn, thêm, sửa, xóa dữ liệu trong Database.
+
+Tính toán logic nghiệp vụ: Ví dụ: "Đơn hàng trên 1 triệu thì được freeship", "Khách hàng sinh nhật trong tháng thì tặng 50 điểm bonus".
+
+Ràng buộc dữ liệu (Validation nghiệp vụ): Ví dụ: "Số lượng tồn kho không được nhỏ hơn 0".
+
+Quy tắc vàng: Model không hề biết View hay Controller tồn tại. Nó hoạt động độc lập hoàn toàn. Bạn có thể bê nguyên phần Model này sang một dự án khác mà không cần sửa dòng code nào.
+
+B. View (Khu vực trình diễn)
+Nhiệm vụ: Lấy dữ liệu thô do Controller đưa cho và biến nó thành giao diện trực quan cho người dùng.
+
+Nhiệm vụ KHÔNG ĐƯỢC LÀM:
+
+❌ Không truy vấn Database.
+
+❌ Không tính toán logic lớn (ví dụ: không được tự cộng tiền ship, không tự check xem tài khoản có đủ tiền mua hàng không).
+
+Chỉ dùng các vòng lặp đơn giản (for, foreach) hoặc câu lệnh điều kiện (if/else) nhẹ nhàng để hiển thị/ẩn các thành phần giao diện.
+
+C. Controller (Kẻ điều hướng không ngủ)
+Controller đóng vai trò như một Tổng đài viên.
+
+Nhiệm vụ:
+
+Lắng nghe URL người dùng gõ vào (Routing).
+
+Hứng các thông tin người dùng gửi lên (Query parameters, Form Data, Body).
+
+Gọi đúng phương thức ở Model để xử lý.
+
+Nhận kết quả từ Model -> Lựa chọn đúng View -> Truyền dữ liệu vào View đó để trả về cho người dùng.
+
+Quy tắc vàng ("Fat Model, Thin Controller"): Controller nên "gầy" (ít code). Tức là Controller chỉ nên làm nhiệm vụ gọi và nhận, không nên tham lam viết logic tính toán dài dòng bên trong Controller.
+
+3. Luồng đi của dữ liệu dưới góc nhìn Kỹ thuật (Step-by-step)
+Giả sử người dùng vào đường dẫn: [https://myshop.com/products/detail/5](https://myshop.com/products/detail/5) (Xem chi tiết sản phẩm có ID = 5).
+
+Bước 1 (Routing -> Controller): Bộ tuyến đường (Router) của ứng dụng phân tích URL và biết rằng: Cần gọi hàm showDetail($id = 5) nằm trong ProductController.
+
+Bước 2 (Controller -> Model): ProductController nhận \(id = 5. Nó không tự vào DB lấy hàng, mà gọi: \)product = $this->productModel->getProductById(5);
+
+Bước 3 (Model -> DB -> Model): ProductModel chạy câu lệnh SELECT * FROM products WHERE id = 5. Database trả về thông tin dữ liệu thô (ví dụ: Tên: iPhone 15, Giá: 20000000, Ảnh: iphone15.png).
+
+Bước 4 (Model -> Controller): ProductModel đóng gói dữ liệu đó và trả về lại cho ProductController.
+
+Bước 5 (Controller -> View): ProductController cầm cục dữ liệu $product đó, nạp vào View product_detail.view.php: return renderView('product_detail', ['data' => $product]);
+
+Bước 6 (View -> Client): File View ráp dữ liệu vào HTML, biên dịch thành mã HTML hoàn chỉnh và Controller gửi trả mã HTML này về trình duyệt của người dùng.
+
+4. Sự tiến hóa: MVC truyền thống vs. MVC hiện đại (API-driven)
+Ngày nay, với sự bùng nổ của các thư viện/framework Frontend như React, Vue, Angular, mô hình MVC có một chút thay đổi cực kỳ quan trọng mà bạn cần biết:
+
+Tiêu chí	MVC truyền thống (Server-Side Rendering)	MVC hiện đại (Decoupled / RESTful API)
+Nơi tồn tại của View	Nằm ngay trên Server cùng với Model & Controller (ví dụ: Laravel Blade, ASP.NET Razor).	Nằm hoàn toàn ở Client/Trình duyệt (chạy bằng React, Vue, Mobile App iOS/Android).
+Kết quả Controller trả về	File HTML/CSS hoàn chỉnh đã được trộn dữ liệu.	Dữ liệu thô dạng JSON {"id": 5, "name": "iPhone 15"}.
+Ưu điểm	SEO rất tốt, dễ triển khai ban đầu.	Mẫu Model & Controller (Backend) dùng chung được cho cả Web, App Mobile, Watch App...
+(Tức là ở kiến trúc hiện đại, Backend chỉ làm nhiệm vụ của Model + Controller (trả về JSON), còn Frontend React/Vue đóng vai trò làm View hứng JSON đó về tự vẽ giao diện).
+
+5. Tổng kết: Khi nào NÊN và KHÔNG NÊN dùng MVC?
+🎯 Nên dùng khi:
+Dự án có định hướng phát triển lâu dài, cần mở rộng nhiều tính năng.
+
+Dự án có từ 2 người trở lên cùng tham gia phát triển.
+
+Cần làm việc với Database phức tạp và nhiều nghiệp vụ kinh doanh (E-commerce, CRM, ERP, Mạng xã hội).
+
+🚫 Không bắt buộc dùng khi:
+Các Tool/Script tự động hóa nhỏ: Chỉ viết một script đọc file Excel rồi gửi Email.
+
+Static Website (Trang web tĩnh): Các trang landing page chỉ giới thiệu công ty, hiển thị thông tin cố định, không có Database, không có đăng nhập. Dùng MVC lúc này giống như "dùng dao mổ trâu để thịt gà".
+
+bạn có thể tóm tắt cho tôi hiểu đc ko
+
+Để dễ nhớ nhất, bạn chỉ cần nắm 4 ý cốt lõi dưới đây về MVC:
+
+1. MVC là gì?
+MVC chia một phần mềm thành 3 mảnh ghép riêng biệt:
+
+M (Model - Dữ liệu & Logic): Chịu trách nhiệm quản lý dữ liệu, truy vấn Database và xử lý tính toán nghiệp vụ.
+
+V (View - Giao diện): Chịu trách nhiệm hiển thị nút bấm, hình ảnh, văn bản (HTML/CSS) cho người dùng nhìn thấy.
+
+C (Controller - Bộ điều khiển): Đóng vai trò "trung gian" tiếp nhận bấm/click từ người dùng, gọi Model xử lý rồi lấy kết quả đưa sang View hiển thị.
+
+2. Tóm tắt luồng hoạt động
+Người dùng bấm nút → Controller nhận yêu cầu → Gọi Model lấy dữ liệu → Đưa dữ liệu cho View → View vẽ ra giao diện trả lại cho Người dùng.
+
+3. Tại sao phải dùng MVC?
+Phân chia công việc: Lập trình viên Backend (viết Model/Controller) và Frontend (viết View) làm việc song song mà không sợ dẫm chân hay đè code của nhau.
+
+Dễ bảo trì: Khi muốn đổi màu sắc, font chữ hay giao diện, bạn chỉ cần sửa file View mà không làm ảnh hưởng hay sập phần xử lý logic ở Model.
+
+Code gọn gàng: Tránh hiện tượng "Spaghetti Code" — gom tất cả HTML, SQL, PHP/Java vào chung 1 file khiến code bị rối, tràn ngập lỗi và khó nâng cấp.
+
+4. Nếu KHÔNG dùng MVC thì sao?
+Code của bạn vẫn chạy được, nhưng dự án sẽ rơi vào tình trạng:
+
+Khó sửa lỗi: Một file kéo dài hàng nghìn dòng code lộn xộn.
+
+Bị lặp lại code (Redundancy): Cùng một câu lệnh lấy dữ liệu nhưng phải copy-paste ở 10 file khác nhau.
+
+Lãng phí thời gian: Dự án cá nhân nhỏ thì không sao, nhưng dự án doanh nghiệp lớn mà không dùng MVC (hoặc các kiến trúc tương tự) thì sẽ rất khó mở rộng và nâng cấp sau này.
+
+DTO, DAO, REPOSITORY LÀ NHƯ THẾ NÀO,
+
+Chào bạn! Đây là ba khái niệm cực kỳ quan trọng và phổ biến trong thiết kế kiến trúc phần mềm (đặc biệt khi làm việc với các framework như Spring Boot, ASP.NET, Laravel hay Express.js). Chúng giúp bổ trợ cho mô hình MVC để code của bạn sạch sẽ, bảo mật và dễ quản lý hơn.
+
+Để dễ hình dung nhất, hãy tiếp tục dùng hình ảnh Nhà hàng:
+
+DTO (Data Transfer Object): Là Thực đơn / Khay bưng đồ. Chỉ dùng để vận chuyển dữ liệu qua lại giữa các tầng mà không chứa bất kỳ logic nào.
+
+DAO (Data Access Object): Là Trợ lý kho nguyên liệu cấp thấp. Chuyên thực hiện các thao tác truy vấn thô trực tiếp với Database (viết SQL thô, làm việc với ResultSet).
+
+Repository: Là Quản lý kho nguyên liệu cấp cao. Đại diện cho một tập hợp các đối tượng (Collection), cung cấp giao diện xử lý dữ liệu thân thiện, hướng đối tượng hơn cho tầng Service/Controller.
+
+1. DTO (Data Transfer Object) — "Kẻ vận chuyển"
+DTO là gì?
+DTO là một object đơn giản (chỉ chứa các trường/properties, getter/setter, không có hàm xử lý logic) được dùng để đóng gói và truyền dữ liệu giữa các tầng hoặc giữa Client và Server.
+
+Tại sao lại cần DTO?
+Giả sử bảng Users trong Database có các trường: id, username, password_hash, email, credit_card_number, created_at.
+
+Nếu bạn trả nguyên Entity User này ra giao diện (View / Frontend API):
+
+Nguy cơ bảo mật: Bạn lỡ để lộ password_hash hay credit_card_number.
+
+Thừa dữ liệu: Client chỉ cần username và email, truyền hết các trường khác gây lãng phí băng thông.
+
+Mô hình hóa yêu cầu: Khi người dùng Đăng ký, họ chỉ gửi lên username, password, confirm_password. Ta tạo một UserRegisterDTO chứa đúng 3 trường này thay vì dùng Entity User.
+
+2. DAO (Data Access Object) vs. REPOSITORY — "Tầng truy xuất dữ liệu"
+Cả DAO và Repository đều thuộc tầng truy xuất dữ liệu (Data Access Layer), nhưng chúng làm việc ở 2 cấp độ abstraction (trừu tượng hóa) khác nhau.
+
+Plaintext
+[Tầng Service / Business Logic]
+       │
+       ├─────────────────────────┐
+       ▼                         ▼
+ [REPOSITORY]                 [DAO]
+ (Hướng đối tượng / Object)   (Hướng Database / Table)
+       │                         │
+       ▼                         ▼
+   [ORMs / JPA]             [SQL Thô / JDBC]
+       │                         │
+       └───────────┬─────────────┘
+                   ▼
+              [DATABASE]
+A. DAO (Data Access Object)
+Bản chất: DAO tập trung vào thao tác với bảng trong Database (Table-centric). Nó ẩn đi các chi tiết kết nối DB (JDBC, SQL queries).
+
+Đặc điểm: Thường chứa các hàm gắn liền với tư duy cơ sở dữ liệu như: insert(), update(), delete(), findBySql().
+
+Ví dụ: Viết các câu lệnh SQL trực tiếp như SELECT * FROM users WHERE status = 1.
+
+B. Repository
+Bản chất: Repository tập trung vào tư duy Hướng đối tượng (Domain-centric). Nó coi Database giống như một tập hợp danh sách các Object nằm trong bộ nhớ (In-memory collection).
+
+Đặc điểm: Thường được hỗ trợ bởi các ORM (như Hibernate/Spring Data JPA, Entity Framework). Bạn không cần viết câu lệnh SQL thô mà chỉ gọi các hàm được trừu tượng hóa cao như .save(), .findById(), .findAll().
+
+Sự khác biệt chính: Repository có thể tổng hợp dữ liệu từ nhiều DAO, nhiều bảng hoặc thậm chí từ một API bên ngoài để trả về một Aggregate Object hoàn chỉnh cho tầng Service.
+
+3. So sánh nhanh DTO - DAO - REPOSITORY
+Tiêu chí	DTO	DAO	REPOSITORY
+Mục đích chính	Đóng gói & vận chuyển dữ liệu	Thao tác CRUD trực tiếp với Database	Quản lý dữ liệu dạng tập hợp Object (Domain)
+Tầng làm việc	Giữa Controller ↔ Service ↔ View/Client	Tầng Persistence (Database)	Tầng Domain / Persistence
+Tư duy thiết kế	Data Transfer (Chỉ chứa Data)	Database-centric (Gắn liền với SQL/Bảng)	Domain-centric (Gắn liền với Đối tượng/Nghiệp vụ)
+Chứa Logic?	❌ Không (Chỉ có getter/setter)	❌ Không (Chỉ có SQL queries)	❌ Không (Nghiệp vụ do Service đảm nhận)
+4. Bức tranh toàn cảnh: Vị trí của DTO, DAO/Repository trong kiến trúc Web
+Một luồng xử lý hoàn chỉnh trong ứng dụng thực tế (ví dụ: Spring Boot / Express.js) sẽ kết hợp tất cả các thành phần này như sau:
+
+Plaintext
+[Client / React / Mobile]
+       │
+       │ (1) Gửi UserRegisterDTO (username, password)
+       ▼
+ [CONTROLLER]
+       │
+       │ (2) Truyền UserRegisterDTO
+       ▼
+  [SERVICE]  ───(3) Kiểm tra logic, mã hóa mật khẩu, chuyển DTO thành Entity User
+       │
+       │ (4) Gọi save(User)
+       ▼
+[REPOSITORY / DAO] ───(5) Thực thi SQL INSERT INTO users...
+       │
+       ▼
+  [DATABASE]
+Client gửi dữ liệu dạng UserRegisterDTO lên Controller.
+
+Controller nhận DTO và chuyển xuống Service (nơi xử lý nghiệp vụ chính).
+
+Service lấy dữ liệu từ DTO, thực hiện các quy tắc nghiệp vụ (ví dụ: mã hóa password), sau đó map thành User (Entity).
+
+Service gọi Repository/DAO để lưu đối tượng User đó vào Database.
+
+Khi trả dữ liệu về cho Client, Service/Controller chuyển đổi Entity thành UserResponseDTO (chỉ chứa id, username, email) để phản hồi.
+
