@@ -1,20 +1,21 @@
 package model;
 
 public abstract class BaseEntity {
-    protected String id;
+    private String id;
 
-    public BaseEntity(){
+    public BaseEntity() {}
 
-    }
     public BaseEntity(String id) {
         this.id = id;
     }
 
-     public String getId(){
-        return id;
+    public String getId() {
+        return this.id;
     }
-    public void setId(String id){
+
+    public void setId(String id) {
         this.id = id;
     }
-    public abstract String toCsvLine(); 
+
+    public abstract String toCsvLine();
 }
