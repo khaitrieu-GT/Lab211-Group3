@@ -1,0 +1,4 @@
+id,name,competition,homeTeamId,awayTeamId,stadiumId,sellerId,matchDate,startTime,status,createdAt
+M001,MU vs Liverpool,Premier League,T001,T002,STD02,U002,2026-12-12,19:30,OPEN,2026-10-05T23:15:58
+M002,Viet Nam vs Thai Lan,AFF Cup,T003,T004,STD01,U002,2027-01-20,19:00,OPEN,2026-10-05T23:15:58
+M003,Viet Nam vs Indonesia,AFF Cup,T003,T005,STD01,U005,2027-03-15,20:00,UPCOMING,2026-10-05T23:15:58
