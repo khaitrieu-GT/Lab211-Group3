@@ -8,8 +8,11 @@ public final class AppConfig {
     /** Thu muc chua file CSV (chay chuong trinh tu thu muc goc du an). */
     public static final String DATA_DIR = "data";
 
-    /** Thoi gian giu ghe (phut) truoc khi tu dong tra ghe. */
-    public static final int HOLD_MINUTES = 5;
+    /**
+     * Thoi gian giu ghe (phut) truoc khi tu dong tra ghe.
+     * Co the doi khi chay de demo: java -Dhold.minutes=1 -cp build/classes Main
+     */
+    public static final int HOLD_MINUTES = Math.max(1, Integer.getInteger("hold.minutes", 5));
 
     /** So phut moi lan gia han giu ghe (Trieu: SeatHold.extendHold). */
     public static final int HOLD_EXTEND_MINUTES = 5;

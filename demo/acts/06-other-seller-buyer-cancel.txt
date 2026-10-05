@@ -1,0 +1,16 @@
+1
+seller1
+123456
+13
+{QR_ET0003}
+0
+1
+buyer1
+123456
+7
+
+8
+ET0003
+Mua nham tran
+0
+0

@@ -25,7 +25,8 @@ public final class ConsoleInput {
     /** Khoa: readString. */
     public String readString(String message) {
         System.out.print(message);
-        return this.scanner.nextLine().trim();
+        // Bo ky tu BOM (xuat hien khi chuyen huong input tu file/PowerShell tren Windows)
+        return this.scanner.nextLine().replace("﻿", "").trim();
     }
 
     public String readNonEmpty(String message) {
