@@ -1,0 +1,174 @@
+
+========================================
+          BUYER TICKET SYSTEM
+========================================
+1. Search Match
+2. View Match Information
+3. View Stadium Map
+4. Select Seat & Create Order
+5. Purchase History
+6. View E-Ticket
+7. Cancel Ticket
+0. Exit
+========================================
+Enter choice: 
+========== MATCH INFORMATION ==========
+Match ID: 1
+Name: MU vs Liverpool
+Competition: Premier League
+Teams: Manchester United vs Liverpool
+Date: 2026-10-10
+Time: 19:30
+Stadium: Old Trafford
+Address: Sir Matt Busby Way
+Status: UPCOMING
+
+========================================
+          BUYER TICKET SYSTEM
+========================================
+1. Search Match
+2. View Match Information
+3. View Stadium Map
+4. Select Seat & Create Order
+5. Purchase History
+6. View E-Ticket
+7. Cancel Ticket
+0. Exit
+========================================
+Enter choice: 
+========== STADIUM MAP ==========
+Stadium: Old Trafford
+Address: Sir Matt Busby Way
+
+--- SECTION A ---
+Seat A01 | Price: 700,000 VND | Status: AVAILABLE
+Seat A02 | Price: 700,000 VND | Status: AVAILABLE
+Seat A03 | Price: 700,000 VND | Status: AVAILABLE
+
+--- SECTION VIP ---
+Seat V01 | Price: 1,000,000 VND | Status: AVAILABLE
+Seat V02 | Price: 1,000,000 VND | Status: AVAILABLE
+
+========================================
+          BUYER TICKET SYSTEM
+========================================
+1. Search Match
+2. View Match Information
+3. View Stadium Map
+4. Select Seat & Create Order
+5. Purchase History
+6. View E-Ticket
+7. Cancel Ticket
+0. Exit
+========================================
+Enter choice: 
+========== STADIUM MAP ==========
+Stadium: Old Trafford
+Address: Sir Matt Busby Way
+
+--- SECTION A ---
+Seat A01 | Price: 700,000 VND | Status: AVAILABLE
+Seat A02 | Price: 700,000 VND | Status: AVAILABLE
+Seat A03 | Price: 700,000 VND | Status: AVAILABLE
+
+--- SECTION VIP ---
+Seat V01 | Price: 1,000,000 VND | Status: AVAILABLE
+Seat V02 | Price: 1,000,000 VND | Status: AVAILABLE
+Enter row: Enter seat number: Seat selected successfully.
+
+========== ORDER ==========
+Order ID: 1001
+Buyer: Dang Dang Khoa
+Match: MU vs Liverpool
+Status: PENDING
+Seats:
+  Seat A01 | Price: 700,000 VND
+Total: 700,000 VND
+Confirm order? (Y/N): Order confirmed successfully.
+
+========== E-TICKET ==========
+Ticket ID: 5001
+Buyer: Dang Dang Khoa
+Match: MU vs Liverpool
+Teams: Manchester United vs Liverpool
+Date: 2026-10-10
+Time: 19:30
+Stadium: Old Trafford
+QR Code: 5ce0fbe5-7417-4d9e-8a3f-fca4eeec74ca
+Issue Date: 2026-09-26T21:40:38.051766942
+Status: ACTIVE
+================================
+
+========================================
+          BUYER TICKET SYSTEM
+========================================
+1. Search Match
+2. View Match Information
+3. View Stadium Map
+4. Select Seat & Create Order
+5. Purchase History
+6. View E-Ticket
+7. Cancel Ticket
+0. Exit
+========================================
+Enter choice: 
+========== PURCHASE HISTORY ==========
+Order #1001 | MU vs Liverpool | Total: 700,000 VND | Status: CONFIRMED
+
+========================================
+          BUYER TICKET SYSTEM
+========================================
+1. Search Match
+2. View Match Information
+3. View Stadium Map
+4. Select Seat & Create Order
+5. Purchase History
+6. View E-Ticket
+7. Cancel Ticket
+0. Exit
+========================================
+Enter choice: 
+========== E-TICKET ==========
+Ticket ID: 5001
+Buyer: Dang Dang Khoa
+Match: MU vs Liverpool
+Teams: Manchester United vs Liverpool
+Date: 2026-10-10
+Time: 19:30
+Stadium: Old Trafford
+QR Code: 5ce0fbe5-7417-4d9e-8a3f-fca4eeec74ca
+Issue Date: 2026-09-26T21:40:38.051766942
+Status: ACTIVE
+================================
+
+========================================
+          BUYER TICKET SYSTEM
+========================================
+1. Search Match
+2. View Match Information
+3. View Stadium Map
+4. Select Seat & Create Order
+5. Purchase History
+6. View E-Ticket
+7. Cancel Ticket
+0. Exit
+========================================
+Enter choice: Enter cancellation reason: 
+========== CANCELLATION ==========
+Request ID: 9001
+Reason: Changed schedule
+Status: PENDING
+
+========================================
+          BUYER TICKET SYSTEM
+========================================
+1. Search Match
+2. View Match Information
+3. View Stadium Map
+4. Select Seat & Create Order
+5. Purchase History
+6. View E-Ticket
+7. Cancel Ticket
+0. Exit
+========================================
+Enter choice: Program ended.
