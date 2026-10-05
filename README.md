@@ -131,14 +131,67 @@ SOLD           RELEASE
 
 ## 🏗️ Project Structure
 
+Pure Java (no framework), MVC + OOP, CSV file storage. Source compiles with Java 8+.
+
 ```text
 Lab211-Group3/
-├── src/            # Java source code
-├── docs/           # Documentation and diagrams
-├── test/           # Test cases / test data
-├── README.md
-└── .gitignore
+├── src/
+│   ├── Main.java          # Entry point: seeds data, opens MainView
+│   ├── model/             # Entities (BaseEntity → User/Admin/Seller/Buyer, Stadium, Section, Seat,
+│   │   └── enums/         #   Team, Match, Ticket, SeatHold, Booking, BookingSeat, Payment,
+│   │                      #   Transaction, ETicket, CancellationRequest, Notification, AuditLog)
+│   ├── view/              # Console UI: MainView, AdminView, SellerView, BuyerView, ProfileView, ...
+│   ├── controller/        # MainController, AdminController, SellerController, MatchController,
+│   │                      #   SeatController, BookingController, PaymentController, TicketController, ...
+│   ├── command/           # Command pattern (Lock/Unlock seat, Create/Confirm booking, Payment, ...)
+│   ├── repository/        # CsvRepository<T> + one repository per entity
+│   ├── service/           # Notification, AuditLog, PaymentGateway (simulated), Report, DataSeeder
+│   ├── dto/               # SeatMap, SalesReport
+│   ├── exception/         # BusinessException
+│   └── util/              # AppConfig, CsvUtil, PasswordUtil, MoneyUtil
+├── data/                  # CSV database (delete the folder to reset sample data)
+├── docs/                  # Member documents, diagrams, MERGE_MAPPING.md
+├── build.xml, nbproject/  # Ant / NetBeans project
+├── run.bat, run.sh        # Compile & run scripts
+└── README.md
 ```
+
+## ▶️ How to Run
+
+Always run from the project root (the program reads/writes `data/`).
+
+```bash
+# Windows
+run.bat
+# Linux / macOS / Git Bash
+./run.sh
+# Or: NetBeans → File → Open Project → Lab211-Group3 → Run,  or  ant run
+```
+
+Sample accounts (password `123456`):
+
+| Username | Role | Note |
+|---|---|---|
+| `admin` | Admin | Full management |
+| `seller1` | Seller | Owns matches M001, M002 |
+| `seller2` | Seller | Owns match M003 (not on sale yet) |
+| `buyer1`, `khoa` | Buyer | Ready to buy tickets |
+
+### End-to-end flow
+
+```text
+Admin   : stadium → sections → seats, teams, seller accounts
+Seller  : create match → generate tickets per section → open sale
+Buyer   : search match → seat map → select seats (HOLD 5 min, max 4)
+          → pay (gateway simulated) → SOLD + E-Ticket (QR)
+          → purchase history → cancellation request
+Admin   : approve/reject cancellation → refund, ticket back on sale
+Seller  : counter sale, QR check-in, sales report
+```
+
+Double booking is blocked by optimistic locking on `Ticket.version`
+(`TicketRepository.updateIfVersionMatches`); Admin menu **9** runs a two-buyer concurrency test.
+Merge notes for each member's code: [docs/MERGE_MAPPING.md](docs/MERGE_MAPPING.md).
 
 ## 🔧 Development
 

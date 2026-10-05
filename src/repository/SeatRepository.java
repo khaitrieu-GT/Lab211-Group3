@@ -1,59 +1,41 @@
 package repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import model.Seat;
-import model.SeatStatus;
-import java.io.*;
-import java.util.*;
+import model.enums.SeatStatus;
 
-public class SeatRepository {
-    private final String filePath = "data/seats.csv";
+/** Nhat: SeatRepository. */
+public class SeatRepository extends CsvRepository<Seat> {
 
-    public SeatRepository() {}
-
-    public List findAll() {
-        List list = new ArrayList();
-        File file = new File(this.filePath);
-        if (!file.exists()) return list;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty() || line.startsWith("id")) continue;
-                Seat seat = Seat.fromCsvLine(line);
-                if (seat != null) list.add(seat);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return list;
+    public SeatRepository() {
+        super("seats.csv", "id,sectionId,rowNumber,seatNumber,status,version", "SEAT", 3);
     }
 
-    public boolean saveAll(List list) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(this.filePath))) {
-            bw.write("id,sectionId,rowNumber,seatNumber,status,version");
-            bw.newLine();
-            for (Seat s : list) {
-                bw.write(s.toCsvLine());
-                bw.newLine();
-            }
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+    @Override
+    protected Seat parse(String line) {
+        return Seat.fromCsvLine(line);
     }
 
-    public synchronized boolean updateStatus(String seatId, SeatStatus newStatus) {
-        List seats = this.findAll();
-        boolean updated = false;
-        for (Seat s : seats) {
-            if (s.getId().equalsIgnoreCase(seatId)) {
-                s.setStatus(newStatus);
-                s.setVersion(s.getVersion() + 1);
-                updated = true;
-                break;
+    public List<Seat> findBySectionId(String sectionId) {
+        List<Seat> result = new ArrayList<>();
+        for (Seat s : findAll()) {
+            if (s.getSectionId().equalsIgnoreCase(sectionId)) {
+                result.add(s);
             }
         }
-        return updated && this.saveAll(seats);
+        return result;
+    }
+
+    /** Nhat: updateStatus - doi trang thai va tang version trong cung mot khoa. */
+    public boolean updateStatus(String seatId, SeatStatus newStatus) {
+        synchronized (this.lock) {
+            Seat seat = findById(seatId);
+            if (seat == null) {
+                return false;
+            }
+            seat.updateStatus(newStatus);
+            return update(seat);
+        }
     }
 }

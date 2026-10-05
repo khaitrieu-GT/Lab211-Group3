@@ -1,67 +1,57 @@
 package repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import model.User;
-import java.io.*;
-import java.util.*;
+import model.enums.Role;
+import model.enums.UserStatus;
 
-public class UserRepository {
-    private final String filePath = "data/users.csv";
+/** Nhat: UserRepository. */
+public class UserRepository extends CsvRepository<User> {
 
-    public UserRepository() {}
-
-    public List findAll() {
-        List list = new ArrayList();
-        File file = new File(this.filePath);
-        if (!file.exists()) return list;
-
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty() || line.startsWith("id")) continue;
-                User u = User.fromCsvLine(line);
-                if (u != null) list.add(u);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return list;
+    public UserRepository() {
+        super("users.csv", "id,username,password,fullName,email,phone,avatar,role,status,version,createdAt,updatedAt", "U", 3);
     }
 
-    public boolean saveAll(List users) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(this.filePath))) {
-            bw.write("id,username,password,fullName,email,role,status");
-            bw.newLine();
-            for (User u : users) {
-                bw.write(u.toCsvLine());
-                bw.newLine();
-            }
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+    @Override
+    protected User parse(String line) {
+        return User.fromCsvLine(line);
     }
 
-    public User findById(String id) {
-        List users = this.findAll();
-        for (User u : users) {
-            if (u.getId().equalsIgnoreCase(id)) {
+    public User findByUsername(String username) {
+        for (User u : findAll()) {
+            if (u.getUsername().equalsIgnoreCase(username.trim())) {
                 return u;
             }
         }
         return null;
     }
 
-    public boolean updateUserStatus(String userId, String newStatus) {
-        List users = this.findAll();
-        boolean found = false;
-        for (User u : users) {
-            if (u.getId().equalsIgnoreCase(userId)) {
-                u.setStatus(newStatus);
-                found = true;
-                break;
+    public List<User> findByRole(Role role) {
+        List<User> result = new ArrayList<>();
+        for (User u : findAll()) {
+            if (u.getRole() == role) {
+                result.add(u);
             }
         }
-        return found && this.saveAll(users);
+        return result;
+    }
+
+    /** Nhat: updateUserStatus. */
+    public boolean updateUserStatus(String userId, UserStatus newStatus) {
+        synchronized (this.lock) {
+            User user = findById(userId);
+            if (user == null) {
+                return false;
+            }
+            if (newStatus == UserStatus.LOCKED) {
+                user.lock();
+            } else if (newStatus == UserStatus.ACTIVE) {
+                user.unlock();
+            } else {
+                user.setStatus(newStatus);
+            }
+            return update(user);
+        }
     }
 }

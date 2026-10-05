@@ -1,4 +1,6 @@
-id,username,password, fullName, email, role, status 
-U001, admin,123456, System Admin, admin@stadium.com, ADMIN, ACTIVE 
-U002, seller1,123456, Nguyen Van Seller, seller@stadium.com, SELLER, ACTIVE 
-U003, buyer1, 123456, Tran Van Buyer, buyer@gmail.com, BUYER, ACTIVE 
+id,username,password,fullName,email,phone,avatar,role,status,version,createdAt,updatedAt
+U001,admin,8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92,System Admin,admin@stadium.com,0900000001,admin.png,ADMIN,ACTIVE,1,2026-10-05T23:15:57,2026-10-05T23:15:57
+U002,seller1,8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92,Nguyen Van Seller,seller@stadium.com,0900000002,seller.png,SELLER,ACTIVE,1,2026-10-05T23:15:57,2026-10-05T23:15:57
+U003,buyer1,8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92,Tran Van Buyer,buyer@gmail.com,0900000003,buyer.png,BUYER,ACTIVE,1,2026-10-05T23:15:57,2026-10-05T23:15:57
+U004,khoa,8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92,Dang Dang Khoa,khoa@gmail.com,0901234567,avatar.jpg,BUYER,ACTIVE,1,2026-10-05T23:15:57,2026-10-05T23:15:57
+U005,seller2,8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92,Le Thi Ban Ve,seller2@stadium.com,0900000005,seller.png,SELLER,ACTIVE,1,2026-10-05T23:15:57,2026-10-05T23:15:57

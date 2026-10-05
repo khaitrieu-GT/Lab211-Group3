@@ -1,9 +1,13 @@
 package model;
 
+/**
+ * Lop cha cua moi thuc the duoc luu xuong CSV (Nhat).
+ */
 public abstract class BaseEntity {
     private String id;
 
-    public BaseEntity() {}
+    public BaseEntity() {
+    }
 
     public BaseEntity(String id) {
         this.id = id;
@@ -17,5 +21,6 @@ public abstract class BaseEntity {
         this.id = id;
     }
 
+    /** Chuyen doi tuong thanh mot dong CSV. */
     public abstract String toCsvLine();
 }

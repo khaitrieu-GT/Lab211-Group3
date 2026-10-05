@@ -1,2 +1,3 @@
-id, name, address, capacity 
-STD01, San Van Dong My Dinh, My Dinh - Ha Noi,40000
+id,name,address,city,capacity,createdAt
+STD01,San Van Dong My Dinh,My Dinh - Nam Tu Liem,Ha Noi,40000,2026-10-05T23:15:57
+STD02,Old Trafford,Sir Matt Busby Way,Manchester,74000,2026-10-05T23:15:57
