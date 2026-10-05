@@ -1,0 +1,141 @@
+1. Mô hình MVC là gì?
+MVC (Model - View - Controller) là một mẫu kiến trúc phần mềm (Architectural Pattern) giúp tách biệt ứng dụng thành 3 phần độc lập, giảm thiểu độ phức tạp và tăng khả năng bảo trì:
+
+Model (Mô hình): Quản lý dữ liệu, trạng thái và logic nghiệp vụ (business logic). Trực tiếp tương tác với cơ sở dữ liệu.
+
+View (Giao diện): Hiển thị dữ liệu trực tiếp cho người dùng (UI). Không chứa logic tính toán phức tạp.
+
+Controller (Bộ điều khiển): Đóng vai trò cầu nối trung gian nhận request từ người dùng, gọi Model xử lý, sau đó quyết định trả kết quả về View nào.
+
+2. Ưu và nhược điểm của MVC
+Ưu điểm:
+Tách bạch mối quan tâm (Separation of Concerns): Code rõ ràng, lỗi giao diện sửa ở View, lỗi logic sửa ở Model.
+
+Phát triển song song: Front-end và Back-end có thể làm việc cùng lúc trên các thành phần khác nhau.
+
+Khả năng tái sử dụng (Reusability): Một Model có thể phục vụ nhiều View khác nhau (Web, Mobile, Desktop).
+
+Dễ kiểm thử (Testability): Dễ viết Unit Test cho từng thành phần độc lập.
+
+Nhược điểm:
+Độ phức tạp tăng: Tăng số lượng file và cấu trúc thư mục so với việc viết code gộp chung.
+
+Tương tác chặt giữa View và Controller (Tight Coupling): Trong mô hình truyền thống, View và Controller phụ thuộc khá sâu vào nhau:
+
+Khó tái sử dụng View cho nền tảng khác.
+
+Khó viết Unit Test độc lập.
+
+Hiệu ứng dây chuyền (Ripple Effect): Thay đổi giao diện ở View có thể bắt buộc phải sửa code trong Controller.(Giải pháp hiện đại: Sử dụng các biến thể như MVP hoặc MVVM với cơ chế Data Binding).
+
+3. Ví dụ thực tế dễ hiểu: Nhà hàng gọi món
+View (Khách hàng): Nhìn menu, gọi món trực tiếp với nhân viên và nhận đĩa thức ăn thành phẩm.
+
+Controller (Nhân viên phục vụ): Nhận yêu cầu từ khách, chuyển xuống bếp, sau đó bưng món ăn ra bàn cho khách.
+
+Model (Đầu bếp & Kho): Nơi chứa nguyên liệu và thực hiện chế biến logic nấu nướng, không cần biết khách là ai, ngồi ở đâu.
+
+4. Các khái niệm bổ sung: DTO, DAO, Repository
+Trong các hệ thống lớn, tầng Model được chia nhỏ để chuyên môn hóa:
+
+DTO (Data Transfer Object): Đối tượng thuần túy chỉ chứa dữ liệu và getter/setter, không có logic nghiệp vụ, dùng để vận chuyển dữ liệu giữa các tầng.
+
+DAO (Data Access Object): Đối tượng chuyên thực hiện các câu lệnh truy vấn CSDL (SQL/ORM) để cô lập tầng lưu trữ dữ liệu.
+
+Repository: Lớp trung gian nằm giữa tầng nghiệp vụ và tầng DAO, trừu tượng hóa dữ liệu dưới dạng các tập hợp đối tượng (collection), cung cấp các phương thức mang tính nghiệp vụ cao hơn.
+
+5. Ví dụ mã nguồn Java thuần (Core Java - Console App)
+Để hiểu bản chất, dưới đây là so sánh giữa việc Không dùng MVC và Có dùng MVC trong một ứng dụng quản lý sinh viên nhỏ.
+
+A. Code KHÔNG DÙNG MVC (Trộn lẫn mọi thứ vào 1 lớp)
+public class StudentManagerWithoutMVC {
+    private String rollNo;
+    private String name;
+
+    public StudentManagerWithoutMVC(String rollNo, String name) {
+        this.rollNo = rollNo;
+        this.name = name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // Logic hiển thị gắn liền với lớp dữ liệu
+    public void displayStudent() {
+        System.out.println("Mã SV: " + this.rollNo);
+        System.out.println("Họ tên: " + this.name);
+    }
+
+    public static void main(String[] args) {
+        StudentManagerWithoutMVC student = new StudentManagerWithoutMVC("SV001", "Nguyen Van A");
+        student.displayStudent();
+        
+        student.setName("Tran Thi B");
+        student.displayStudent();
+    }
+}
+B. Code CÓ DÙNG MVC (Tách bạch Model - View - Controller)
+1. Model (Student.java)
+public class Student {
+    private String rollNo;
+    private String name;
+
+    public String getRollNo() { return rollNo; }
+    public void setRollNo(String rollNo) { this.rollNo = rollNo; }
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+}
+2. View (StudentView.java)
+public class StudentView {
+    public void printStudentDetails(String name, String rollNo) {
+        System.out.println("Mã SV: " + rollNo);
+        System.out.println("Họ tên: " + name);
+    }
+}
+3. Controller (StudentController.java)
+public class StudentController {
+    private Student model;
+    private StudentView view;
+
+    public StudentController(Student model, StudentView view) {
+        this.model = model;
+        this.view = view;
+    }
+
+    public void setStudentName(String name) {
+        model.setName(name);
+    }
+
+    public void updateView() {
+        view.printStudentDetails(model.getName(), model.getRollNo());
+    }
+}
+4. Main Class (MainApp.java)
+public class MainApp {
+    public static void main(String[] args) {
+        Student model = new Student();
+        model.setRollNo("SV001");
+        model.setName("Nguyen Van A");
+
+        StudentView view = new StudentView();
+        StudentController controller = new StudentController(model, view);
+
+        controller.updateView();
+
+        // Cập nhật qua Controller
+        controller.setStudentName("Tran Thi B");
+        controller.updateView();
+    }
+}
+6. Bảng so sánh tổng kết
+- Cấu trúc:
++ Không dùng MVC: Gộp chung dữ liệu, logic và giao diện vào một file/hàm.
++ Có dùng MVC: Tách biệt rõ ràng Model, View, Controller thành các module độc lập.
+- Bảo trì:
++ Không dùng MVC: Khó, dễ phát sinh lỗi lan truyền khi thay đổi giao diện hoặc CSDL.
++ Có dùng MVC: Dễ, sửa giao diện chỉ sửa ở View, sửa logic chỉ sửa ở Model.
+- Tái sử dụng
++ Không dùng MVC: Thấp
++ Có dùng MVC: Cao (Model có thể dùng chung cho nhiều loại View).
