@@ -1,0 +1,3 @@
+id, stadiumId, name,capacity, basePrice 
+SEC01,STD01,khan dai A (VIP),5000, 500000.0
+SEC02,STD01,Khan dai B,10000, 300000.0
