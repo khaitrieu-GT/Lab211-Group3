@@ -191,7 +191,7 @@ Seller  : counter sale, QR check-in, sales report
 
 Double booking is blocked by optimistic locking on `Ticket.version`
 (`TicketRepository.updateIfVersionMatches`); Admin menu **9** runs a two-buyer concurrency test.
-Merge notes for each member's code: [docs/MERGE_MAPPING.md](docs/MERGE_MAPPING.md).
+Merge notes: [docs/MERGE_MAPPING.md](docs/MERGE_MAPPING.md) · Demo script covering every flow: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 
 ## 🔧 Development
 

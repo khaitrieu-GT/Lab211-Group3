@@ -9,3 +9,6 @@ nbproject/private/
 .idea/
 *.iml
 .vscode/
+
+# Demo output
+demo/output/

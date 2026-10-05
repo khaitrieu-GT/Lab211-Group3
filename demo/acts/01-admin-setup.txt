@@ -1,0 +1,49 @@
+1
+admin
+sai-mat-khau
+1
+admin
+123456
+2
+2
+San Van Dong Thong Nhat
+138 Dao Duy Tu, Quan 10
+TP Ho Chi Minh
+25000
+4
+STD03
+Khan dai A
+VIP
+100
+400000
+7
+STD03
+SEC05
+A
+5
+5
+STD03
+SEC05
+Khan dai A (VIP)
+120
+3
+STD03
+0
+3
+2
+Lao
+lao.png
+Laos
+1
+0
+1
+3
+seller3
+123456
+Pham Van Ban
+seller3@stadium.com
+0900000006
+1
+0
+0
+0
