@@ -1,0 +1,645 @@
+Bây giờ tôi muốn tạo liên kết với nhóm tôi qua tất cả các branch trên github: https://github.com/khaitrieu-GT/Lab211-Group3. Lưu ý bạn chỉ lấy code
+
+Để kết nối mã nguồn của bạn với 4 thành viên còn lại thông qua GitHub Repository [https://github.com/khaitrieu-GT/Lab211-Group3](https://github.com/khaitrieu-GT/Lab211-Group3), bạn có thể liên kết và quản lý toàn bộ các nhánh (branches) trực tiếp trong Terminal của VS Code.
+
+Dưới đây là quy trình chi tiết giúp bạn kiểm tra các branch từ remote GitHub, chuyển đổi nhánh và đồng bộ hóa mã nguồn riêng cho công việc của bạn (TV1 – Admin).
+
+BƯỚC 1: KẾT NỐI REPOSITORY VÀ KIỂM TRA TẤT CẢ CÁC BRANCH
+Mở Terminal trong VS Code (Ctrl +  `).
+
+Kiểm tra xem dự án local đã liên kết với link Repository của nhóm chưa:
+
+Bash
+git remote -v
+Nếu chưa có link [https://github.com/khaitrieu-GT/Lab211-Group3](https://github.com/khaitrieu-GT/Lab211-Group3), hãy thêm bằng lệnh:
+
+Bash
+git remote add origin https://github.com/khaitrieu-GT/Lab211-Group3.git
+Cập nhật danh sách tất cả các branch từ GitHub về máy cá nhân:
+
+Bash
+git fetch --all
+Xem danh sách tất cả các branch (bao gồm cả branch local và branch của các thành viên khác trên GitHub):
+
+Bash
+git branch -a
+Màn hình Terminal sẽ hiển thị các nhánh remote như remotes/origin/main, remotes/origin/feature/admin-tv1, remotes/origin/feature/seller-tv2, v.v.
+
+
+BƯỚC 2: TẠO HOẶC CHUYỂN SANG BRANCH CÁ NHÂN CỦA BẠN (feature/admin-tv1)
+Theo phân công quy chuẩn, bạn thuộc TV1 (Admin & Hạ tầng Dữ liệu). Bạn nên làm việc trên nhánh riêng feature/admin-tv1 để không đè mã nguồn trực tiếp lên nhánh main:
+
+Chuyển sang nhánh công việc của TV1:
+
+Bash
+git checkout -b feature/admin-tv1
+(Nếu nhánh này đã tồn tại trên GitHub, dùng lệnh: git checkout feature/admin-tv1)
+
+
+Cách kéo code mới nhất từ nhánh main hoặc các nhánh chung của nhóm về:
+
+Bash
+git pull origin main
+BƯỚC 3: ĐẨY TOÀN BỘ MÃ NGUỒN CỦA TV1 LÊN GITHUB REPOSITORY
+Sau khi code và sửa lỗi xong ở local, bạn chạy các lệnh sau để đẩy mã nguồn của TV1 lên branch riêng trên GitHub:
+
+Kiểm tra trạng thái các file đã thay đổi:
+
+Bash
+git status
+Thêm tất cả mã nguồn Java (src/), file CSV (data/) và file AI Log (ai_logs/):
+
+Bash
+git add .
+Tạo commit ghi rõ tiến độ công việc:
+
+Bash
+git commit -m "Feat(TV1): Hoan thanh 100% code MVC Admin & Data Foundation (Model, Repo, Controller, View)"
+Đẩy (push) mã nguồn lên branch feature/admin-tv1 trên GitHub:
+
+Bash
+git push -u origin feature/admin-tv1
+BƯỚC 4: HƯỚNG DẪN KÉO MÃ NGUỒN CỦA CÁC THÀNH VIÊN KHÁC VỀ KIỂM TRA
+Khi các thành viên khác (TV2, TV3, TV4, TV5) đẩy branch của họ lên GitHub:
+
+Để xem thử code của một thành viên khác (ví dụ: feature/seller-tv2), bạn gõ:
+
+Bash
+git checkout feature/seller-tv2
+Để quay trở lại branch làm việc của mình:
+
+Bash
+git checkout feature/admin-tv1
+Khi nhóm thống nhất gộp mã nguồn của tất cả các thành viên vào nhánh main, bạn chỉ cần chuyển về main và kéo code đầy đủ về:
+
+Bash
+git checkout main
+git pull origin main
+Bây giờ bạn có thể mở Terminal VS Code và chạy git fetch --all để bắt đầu liên kết toàn bộ nhánh với GitHub nhóm!
+
+origin  https://github.com/khaitrieu-GT/Lab211-Group3/tree/ho-le-hoang-nhat.git (fetch)
+
+origin  https://github.com/khaitrieu-GT/Lab211-Group3/tree/ho-le-hoang-nhat.git (push)
+
+đã có
+
+Đường dẫn remote Git hiện tại trên máy của bạn đang gặp vấn đề nhỏ về định dạng URL.
+
+Đường dẫn bạn vừa kiểm tra hiển thị dạng web tree:
+[https://github.com/khaitrieu-GT/Lab211-Group3/tree/ho-le-hoang-nhat.git](https://github.com/khaitrieu-GT/Lab211-Group3/tree/ho-le-hoang-nhat.git)
+
+Đây là đường dẫn đến một thư mục/nhánh trên giao diện web GitHub chứ không phải là URL chuẩn để Git thực hiện giao tiếp repository (Clone/Fetch/Push). Nếu để URL này, Git sẽ báo lỗi Repository not found hoặc lỗi kết nối khi bạn thực hiện push code.
+
+Dưới đây là 3 bước cập nhật lại URL chuẩn và đẩy nhánh riêng của bạn (ho-le-hoang-nhat) lên GitHub:
+
+BƯỚC 1: CẬP NHẬT LẠI REMOTE URL CHUẨN TRÊN TERMINAL
+Mở Terminal trong VS Code và chạy lệnh sau để thay đổi origin về đường dẫn đúng của Repository nhóm:
+
+Bash
+git remote set-url origin https://github.com/khaitrieu-GT/Lab211-Group3.git
+Kiểm tra lại xem URL đã chuẩn chưa bằng lệnh:
+
+Bash
+git remote -v
+(Màn hình phải hiển thị đúng: origin [https://github.com/khaitrieu-GT/Lab211-Group3.git](https://github.com/khaitrieu-GT/Lab211-Group3.git) (fetch/push))
+
+BƯỚC 2: CẬP NHẬT TẤT CẢ CÁC BRANCH TỪ GITHUB VỀ MÁY
+Chạy lệnh để kéo danh sách tất cả các branch hiện có trên GitHub về local:
+
+Bash
+git fetch --all
+Xem tất cả các branch (cả ở local và remote):
+
+Bash
+git branch -a
+BƯỚC 3: ĐẨY CODE DỰ ÁN CỦA BẠN LÊN NHÁNH CÁ NHÂN (ho-le-hoang-nhat)
+Chuyển sang làm việc trên nhánh cá nhân của bạn:
+
+Bash
+git checkout -b ho-le-hoang-nhat
+(Nếu nhánh này đã tạo trước đó, dùng lệnh: git checkout ho-le-hoang-nhat)
+
+Thêm toàn bộ file code (src, data, ai_logs) vào Git staging:
+
+Bash
+git add .
+Tạo Commit ghi nhận tiến độ:
+
+Bash
+git commit -m "Feat(TV1): Dam bao tuong thich JDK8/17 va cap nhat UML Class Diagram"
+Đẩy (Push) code lên đúng nhánh ho-le-hoang-nhat trên GitHub:
+
+Bash
+git push -u origin ho-le-hoang-nhat
+Sau khi chạy xong lệnh git push ở Bước 3, bạn lên link GitHub của nhóm [https://github.com/khaitrieu-GT/Lab211-Group3](https://github.com/khaitrieu-GT/Lab211-Group3) và chọn vào mục Branches, bạn sẽ thấy nhánh ho-le-hoang-nhat chứa toàn bộ mã nguồn TV1 của bạn đã được cập nhật an toàn.
+
+ĐẨY CODE DỰ ÁN CỦA BẠN LÊN NHÁNH CÁ NHÂN (ho-le-hoang-nhat) tôi đã đẩy lên từ trước thì bh cần đẩy lên cữa ko
+
+Nếu bạn đã thực hiện đẩy (push) thành công mã nguồn lên nhánh cá nhân ho-le-hoang-nhat trên GitHub từ trước, việc bạn có cần phải đẩy nữa hay không phụ thuộc hoàn toàn vào trạng thái làm việc hiện tại của bạn:
+
+1. KHI NÀO BẠN CẦN TIẾP TỤC ĐẨY (PUSH) CODE LÊN?
+Bạn CẦN thực hiện lệnh git push lại nếu gặp một trong các trường hợp sau:
+
+Bạn vừa chỉnh sửa/thêm bớt code ở máy local: Ví dụ bạn vừa sửa lỗi biên dịch (Type mismatch / Java 8/17 compatibility), cập nhật các file Model/Repository (UserRepository, StadiumRepository), hay chỉnh sửa file báo cáo/UML.
+
+Bạn muốn cập nhật bản code mới nhất để các thành viên khác kéo về: Khi TV2, TV3, TV4 hay TV5 cần lấy cấu trúc dữ liệu nền tảng mới nhất từ bạn để đấu nối hệ thống.
+
+2. KHI NÀO BẠN KHÔNG CẦN ĐẨY (PUSH) NỮA?
+Bạn KHÔNG CẦN đẩy code nữa nếu:
+
+Mã nguồn dưới máy tính của bạn và trên nhánh ho-le-hoang-nhat trên GitHub đã hoàn toàn giống nhau (không có chỉnh sửa hay file mới nào phát sinh từ lần push trước).
+
+3. CÁCH KIỂM TRA XEM CÓ CẦN PUSH HAY KHÔNG (TRONG 3 GIÂY)
+Mở Terminal trong VS Code tại thư mục dự án và gõ lệnh:
+
+Bash
+git status
+Trường hợp 1: Terminal báo:
+Your branch is up to date with 'origin/ho-le-hoang-nhat'. nothing to commit, working tree clean
+→ Kết luận: Code ở local và GitHub đã đồng bộ 100%. Bạn không cần phải đẩy lên nữa.
+
+Trường hợp 2: Terminal hiển thị các file màu đỏ/xanh (file đã bị thay đổi) hoặc báo:
+Your branch is ahead of 'origin/ho-le-hoang-nhat' by X commits
+→ Kết luận: Bạn có thay đổi mới chưa đẩy lên GitHub. Hãy đẩy lên bằng 3 câu lệnh quen thuộc:
+
+Bash
+git add .
+git commit -m "Update: Cap nhat va toi uu ma nguon TV1"
+git push origin ho-le-hoang-nhat
+cái đây là up vô nhánh ho le hoang nhat chứ
+
+Đúng rồi bạn nhé! Lệnh git push origin ho-le-hoang-nhat là lệnh chính xác để đẩy mã nguồn từ máy cá nhân lên nhánh cá nhân ho-le-hoang-nhat trên GitHub repository của nhóm ([https://github.com/khaitrieu-GT/Lab211-Group3](https://github.com/khaitrieu-GT/Lab211-Group3)).
+
+Khi thực hiện đẩy code lên nhánh ho-le-hoang-nhat:
+
+Toàn bộ mã nguồn hoàn chỉnh của bạn (TV1 - Admin bao gồm Model, Repository, Controller, View, file CSV và file AI Log) sẽ được lưu trữ an toàn riêng trên nhánh của bạn.
+
+Mã nguồn của bạn trên nhánh này sẽ không làm đè hay ảnh hưởng trực tiếp đến công việc của các thành viên khác ở các nhánh khác.
+
+Các thành viên khác (TV2, TV3, TV4, TV5) hoặc Trưởng nhóm khi cần lấy dữ liệu cơ sở từ bạn có thể vào GitHub chuyển sang branch ho-le-hoang-nhat để xem hoặc gộp (merge) vào nhánh chung main.
+
+Bạn chỉ cần duy trì làm việc và đẩy code lên đúng nhánh này trong suốt quá trình phát triển là chuẩn xác!
+
+PS C:\Users\HOANG NHAT\Downloads\TicketBookingSystem> git push origin ho-le-hoang-nhat
+
+error: src refspec ho-le-hoang-nhat does not match any
+
+error: failed to push some refs to 'https://github.com/khaitrieu-GT/Lab211-Group3.git'
+
+PS C:\Users\HOANG NHAT\Downloads\TicketBookingSystem>  
+
+Lỗi error: src refspec ho-le-hoang-nhat does not match any xảy ra do máy tính của bạn hiện tại chưa có branch local tên là ho-le-hoang-nhat, hoặc bạn chưa commit bất kỳ thay đổi nào trên branch đó trước khi thực hiện lệnh push.
+
+Dưới đây là các bước xử lý nhanh trên Terminal VS Code để khắc phục lỗi này và đẩy code lên thành công:
+
+BƯỚC 1: KIỂM TRẢ TRẠNG THÁI VÀ TẠO BRANCH LOCAL
+Mở Terminal trong VS Code tại thư mục TicketBookingSystem.
+
+Kiểm tra xem bạn đang đứng ở branch nào:
+
+Bash
+git branch
+Tạo và chuyển ngay sang branch ho-le-hoang-nhat:
+
+Bash
+git checkout -b ho-le-hoang-nhat
+(Nếu Terminal báo branch đã tồn tại, dùng lệnh: git checkout ho-le-hoang-nhat)
+
+BƯỚC 2: THÊM TẤT CẢ CODE VÀ TẠO COMMIT
+Git yêu cầu phải có ít nhất 1 Commit ở local trước khi thực hiện Push lên GitHub.
+
+Thêm tất cả các file mã nguồn (src/), file CSV (data/) và file nhật ký (ai_logs/):
+
+Bash
+git add .
+Kiểm tra lại danh sách các file đã được chuẩn bị:
+
+Bash
+git status
+Tạo Commit ghi nhận thay đổi:
+
+Bash
+git commit -m "Feat(TV1): Cap nhat ma nguon Admin MVC va Class Diagram"
+BƯỚC 3: PUSH LẠI LÊN GITHUB REPOSITORY
+Chạy câu lệnh push kèm cờ -u để thiết lập liên kết mặc định giữa branch local và branch remote:
+
+Bash
+git push -u origin ho-le-hoang-nhat
+Sau khi chạy lệnh trên, Git sẽ tải bộ mã nguồn của bạn lên đúng branch ho-le-hoang-nhat trên repository [https://github.com/khaitrieu-GT/Lab211-Group3.git](https://github.com/khaitrieu-GT/Lab211-Group3.git) mà không còn báo lỗi refspec does not match any nữa!
+
+master
+Ký hiệu - master (hoặc nút/chữ master) trên giao diện Git/GitHub/VS Code đại diện cho Nhánh chính (Branch chính) của Repository mã nguồn.
+
+Dưới đây là ý nghĩa chi tiết và mối liên hệ trực tiếp đến công việc hiện tại trên branch cá nhân của bạn (ho-le-hoang-nhat):
+
+1. Ý NGHĨA KỸ THUẬT CỦA NHÁNH master (HOẶC main)
+Nhánh chứa sản phẩm chuẩn (Production/Stable Code): Nhánh master (hoặc main) là nơi lưu trữ toàn bộ bộ mã nguồn hoàn chỉnh, ổn định và chính thức nhất của dự án.
+
+Điểm gộp code chung của nhóm: Khi 5 thành viên trong nhóm hoàn thành phần việc riêng trên các branch cá nhân (ví dụ: branch ho-le-hoang-nhat của bạn), trưởng nhóm sẽ tiến hành gộp (Merge) code từ các branch cá nhân vào nhánh master này để tạo thành hệ thống hoàn chỉnh.
+
+2. PHÂN BIỆT NGUYÊN TẮC GIỮA master VÀ ho-le-hoang-nhat
+Nhánh ho-le-hoang-nhat (Feature Branch): Là "không gian làm việc riêng" của bạn (TV1 – Admin). Bạn có thể thoải mái thêm, sửa, chạy thử nghiệm code mà không làm ảnh hưởng hay gây lỗi đến mã nguồn chung của các bạn khác.
+
+Nhánh master (Main Branch): Là "ngôi nhà chung" của cả nhóm. Code chỉ được gộp vào master khi đã biên dịch thành công, không còn lỗi Type mismatch và đã đáp ứng đúng chức năng.
+
+3. THAO TÁC CẦN LƯU Ý TRÊN TERMINAL VS CODE
+Kiểm tra xem bạn đang đứng ở nhánh nào:
+
+Bash
+git branch
+(Nếu thấy dấu * nằm ở ho-le-hoang-nhat, nghĩa là bạn đang làm việc đúng nhánh cá nhân).
+
+Cách cập nhật code mới nhất từ nhánh chính master về nhánh cá nhân của bạn:
+Khi trưởng nhóm hoặc các thành viên khác có cập nhật mới trên master, bạn chỉ cần chạy 2 lệnh sau để kéo code mới về nhánh của mình:
+
+Bash
+git checkout ho-le-hoang-nhat
+git merge origin/master
+Đẩy code cá nhân lên GitHub (Luôn đẩy lên branch cá nhân):
+
+Bash
+git push origin ho-le-hoang-nhat
+hieenj taij * master
+
+Ký hiệu * master (hoặc * main) hiển thị trên Terminal của VS Code có nghĩa là bạn đang đứng trực tiếp tại nhánh chính (master) của dự án ở máy local.
+
+Nếu mục tiêu của bạn là push code lên nhánh cá nhân ho-le-hoang-nhat, bạn chỉ cần thực hiện 3 lệnh đơn giản sau trong Terminal để tạo/chuyển nhánh, commit và push:
+
+Chuyển sang nhánh cá nhân ho-le-hoang-nhat:
+
+Bash
+git checkout -b ho-le-hoang-nhat
+(Nếu nhánh này đã được tạo ở local từ trước, dùng lệnh: git checkout ho-le-hoang-nhat)
+
+Thêm toàn bộ file code và tạo commit:
+
+Bash
+git add .
+git commit -m "Feat(TV1): Dam bao tuong thich JDK8/17 va cap nhat UML Class Diagram"
+Push code lên đúng nhánh cá nhân trên GitHub:
+
+Bash
+git push -u origin ho-le-hoang-nhat
+Sau khi chạy xong lệnh trên, code của bạn sẽ được tải an toàn lên nhánh ho-le-hoang-nhat trên GitHub mà không ảnh hưởng trực tiếp đến nhánh master chung của nhóm.
+
+PS C:\Users\HOANG NHAT\Downloads\TicketBookingSystem> git checkout -b ho-le-hoang-nhat
+
+Switched to a new branch 'ho-le-hoang-nhat'
+
+Zoo tshoob! Koj tso cov lus txib no rau havan Terminal (VS Code):
+
+Bash
+git checkout -b ho-le-hoang-nhat
+Switched to a new branch 'ho-le-hoang-nhat'
+Qhov no txhais tias koj tau tsim thiab hloov mus rau koj lub res (branch) tshiab hu ua ho-le-hoang-nhat sib haum xeeb lawm!
+
+Bhoj no, koj cia li ua raws 3 kauj ruam hauv qab no kom tso koj cov code tshiab (TV1 - Admin) mus rau hauv GitHub repository xwb:
+
+1. Ntxiv tag nrho cov file code tshiab
+Bash
+git add .
+2. Tsim commit (sau cov lus teb rau qhov koj tau ua)
+Bash
+git commit -m "Feat(TV1): Cap nhat code Admin MVC va Class Diagram"
+3. Tso (Push) code mus rau hauv branch ho-le-hoang-nhat ntawm GitHub
+Bash
+git push -u origin ho-le-hoang-nhat
+Ua li no xwb, koj cov code yuav raug xa mus rau hauv branch ho-le-hoang-nhat ntawm koj pawg GitHub ([https://github.com/khaitrieu-GT/Lab211-Group3](https://github.com/khaitrieu-GT/Lab211-Group3)) yam tsis muaj teeb meem dab tsi ntxiv lawm!
+
+chuyển sang tiếng việt
+
+Dưới đây là phần dịch toàn bộ câu phản hồi sang Tiếng Việt chuẩn mực, tự nhiên và giữ nguyên các câu lệnh Git kỹ thuật để bạn thực hiện dễ dàng:
+
+Chúc mừng bạn! Bạn đã gõ câu lệnh này thành công trên Terminal của VS Code:
+
+Bash
+git checkout -b ho-le-hoang-nhat
+Switched to a new branch 'ho-le-hoang-nhat'
+Thông báo này có nghĩa là bạn đã tạo thành công và chuyển sang nhánh (branch) mới có tên là ho-le-hoang-nhat!
+
+Bây giờ, bạn chỉ cần thực hiện lần lượt 3 bước đơn giản dưới đây để đẩy bộ mã nguồn mới nhất của bạn (TV1 – Admin) lên trên GitHub:
+
+BƯỚC 1: THÊM TẤT CẢ CÁC FILE MÃ NGUỒN MỚI
+Chạy lệnh sau để gom toàn bộ các file đã thay đổi/tạo mới vào khu vực chuẩn bị (Staging area):
+
+Bash
+git add .
+BƯỚC 2: TẠO COMMIT (LƯU LẠI GHI CHÚ TIẾN ĐỘ)
+Chạy lệnh commit kèm lời nhắn mô tả ngắn gọn công việc bạn đã làm:
+
+Bash
+git commit -m "Feat(TV1): Cap nhat code Admin MVC va Class Diagram"
+BƯỚC 3: ĐẨY (PUSH) CODE LÊN NHÁNH ho-le-hoang-nhat TRÊN GITHUB
+Thực hiện lệnh push để tải mã nguồn lên đúng nhánh cá nhân trên repository của nhóm:
+
+Bash
+git push -u origin ho-le-hoang-nhat
+Chỉ cần hoàn thành 3 bước trên, toàn bộ mã nguồn của bạn sẽ được lưu trữ an toàn trên nhánh ho-le-hoang-nhat thuộc GitHub nhóm ([https://github.com/khaitrieu-GT/Lab211-Group3](https://github.com/khaitrieu-GT/Lab211-Group3)) mà không gặp bất kỳ lỗi nào nữa!
+
+tôi muốn gọp tổng hợp code của tất cả các thành viên
+
+Để gộp (merge) tổng hợp mã nguồn của tất cả 5 thành viên trong nhóm từ các nhánh (branches) riêng trên GitHub ([https://github.com/khaitrieu-GT/Lab211-Group3](https://github.com/khaitrieu-GT/Lab211-Group3)) thành một dự án hoàn chỉnh trên nhánh chính main (hoặc master), bạn thực hiện theo các quy trình tiêu chuẩn dưới đây trực tiếp trên Terminal của VS Code.
+
+BƯỚC 1: KIỂM TRA LẠI TẤT CẢ CÁC NHÁNH TRÊN GITHUB
+Mở Terminal VS Code tại thư mục dự án TicketBookingSystem, cập nhật danh sách tất cả các nhánh từ GitHub về máy:
+
+Bash
+git fetch --all
+Xem danh sách toàn bộ các nhánh hiện có trên local và remote GitHub:
+
+Bash
+git branch -a
+(Màn hình sẽ hiển thị danh sách các nhánh của 5 thành viên, ví dụ: ho-le-hoang-nhat, feature/seller-tv2, feature/buyer-tv3, feature/booking-tv4, feature/common-tv5...)
+
+
+BƯỚC 2: QUAY VỀ NHÁNH CHÍNH (main HOẶC master)
+Chuyển về nhánh chính để làm nơi hội tụ/gộp mã nguồn chung cho cả nhóm:
+
+Bash
+git checkout main
+(Nếu nhánh chính của nhóm bạn đặt tên là master, hãy gõ git checkout master)
+
+
+Kéo bản mã nguồn mới nhất của nhánh chính từ GitHub về:
+
+Bash
+git pull origin main
+BƯỚC 3: TIẾN HÀNH GỘP (MERGE) TỪNG NHÁNH CỦA CÁC THÀNH VIÊN
+Nên gộp theo đúng thứ tự phụ thuộc kiến trúc của dự án để hạn chế tối đa xung đột (Conflict):
+
+Gộp nhánh của TV1 (Hạ tầng dữ liệu & Admin của bạn):
+
+
+Bash
+git merge ho-le-hoang-nhat
+Gộp nhánh của TV5 (Generic Repository, Data Generator, Auth):
+
+
+Bash
+git merge feature/common-tv5
+Gộp nhánh của TV2 (Seller - Trận đấu, Vé, Doanh thu):
+
+
+Bash
+git merge feature/seller-tv2
+Gộp nhánh của TV3 (Buyer - UI chọn ghế, Tìm trận):
+
+
+Bash
+git merge feature/buyer-tv3
+Gộp nhánh của TV4 (Booking, Double Booking Sync, Simulator Tool):
+
+
+Bash
+git merge feature/booking-tv4
+(Lưu ý: Thay thế tên nhánh feature/... chính xác theo tên nhánh mà các bạn trong nhóm đã đặt và push trên GitHub).
+
+BƯỚC 4: XỬ LÝ XUNG ĐỘT MÃ NGUỒN (CONFLICT) NẾU CÓ
+Nếu hai thành viên cùng chỉnh sửa trên một file (ví dụ file Main.java hoặc file CSV trong data/), Git sẽ báo trạng thái CONFLICT.
+
+Mở file bị báo Conflict trên VS Code. Bạn sẽ thấy dòng kẻ so sánh:
+
+Plaintext
+<<<<<<< HEAD (Mã hiện tại)
+// Code từ nhánh main
+=======
+// Code từ nhánh của thành viên vừa gộp
+>>>>>>> feature/seller-tv2
+Trên VS Code, bấm vào nút hỗ trợ nhanh phía trên: Accept Incoming Change (Nhận code mới) hoặc Accept Both Changes (Giữ cả hai).
+
+Sau khi giải quyết xong tất cả các file bị conflict, gõ lệnh lưu lại:
+
+Bash
+git add .
+git commit -m "Fix(Merge): Gop ma nguon va xu ly xung dot giua cac thanh vien"
+BƯỚC 5: ĐẨY (PUSH) BỘ MÃ NGUỒN TỔNG HỢP LÊN NHÁNH CHÍNH GITHUB
+Sau khi đã gộp đầy đủ mã nguồn của 5 thành viên trên máy local, chạy lệnh để đẩy bộ mã tổng hợp chính thức lên nhánh main (hoặc master) trên GitHub:
+
+Bash
+git push origin main
+BƯỚC 6: KIỂM TRA LẠI DỰ ÁN TRÊN VS CODE
+Sau khi gộp xong, kiểm tra cấu trúc thư mục dự án đảm bảo đầy đủ các gói tầng MVC:
+
+Plaintext
+TicketBookingSystem/
+├── data/                    ← Đầy đủ file CSV (stadiums, sections, seats, users, matches, tickets)
+├── ai_logs/                 ← Chứa file AI Log cá nhân của 5 thành viên (member1_ai_log đến member5_ai_log)
+└── src/
+    ├── model/               ← Đầy đủ các Entity (User, Stadium, Section, Seat, Match, Ticket...)
+    ├── repository/          ← Đầy đủ các Repository I/O CSV
+    ├── controller/          ← AdminController, SellerController, FanController, BookingController...
+    ├── view/                ← AdminView, ReportView, SeatMapView, BookingView...
+    └── Main.java            ← Điểm khởi chạy chính khởi tạo menu kết nối toàn hệ thống
+Bấm F5 chạy thử Main.java để xác nhận chương trình vận hành trơn tru toàn bộ luồng từ Admin → Seller → Buyer → Booking.
+
+PS C:\Users\HOANG NHAT\Downloads\TicketBookingSystem> git branch -a
+
+ho-le-hoang-nhat
+  master
+
+  remotes/origin/HEAD -> origin/main
+
+  remotes/origin/bui-khai-trieu
+
+  remotes/origin/chu-bao-khanh
+
+  remotes/origin/dang-dang-khoa
+
+  remotes/origin/dev
+
+  remotes/origin/ho-le-hoang-nhat
+
+  remotes/origin/main
+
+  remotes/origin/ngo-pham-nguyet-minh
+
+Danh sách hiển thị từ Terminal của bạn cho thấy dự án đã cập nhật đầy đủ cấu trúc quản lý nhánh (branch) trên Git/GitHub:
+
+* ho-le-hoang-nhat (có dấu * ở đầu): Đây là nhánh cá nhân hiện tại mà bạn đang đứng làm việc dưới máy local.
+
+master: Nhánh chính cũ dưới local.
+
+remotes/origin/main: Nhánh chính chính thức trên GitHub.
+
+remotes/origin/bui-khai-trieu, remotes/origin/chu-bao-khanh, remotes/origin/dang-dang-khoa, remotes/origin/ngo-pham-nguyet-minh: Các nhánh làm việc riêng của 4 thành viên còn lại trong nhóm đã được đưa lên GitHub.
+
+remotes/origin/ho-le-hoang-nhat: Nhánh cá nhân của bạn đã được liên kết trực tiếp và đồng bộ thành công lên GitHub.
+
+HƯỚNG DẪN CÁC THAO TÁC TIẾP THEO
+1. Đẩy code mới nhất của bạn (TV1) lên nhánh cá nhân trên GitHub
+Mỗi khi bạn hoàn thành chỉnh sửa hoặc cập nhật mã nguồn trong VS Code, hãy chạy 3 câu lệnh sau để lưu lên nhánh ho-le-hoang-nhat:
+
+Bash
+git add .
+git commit -m "Feat(TV1): Cap nhat ma nguon Admin va thuat toan MVC"
+git push origin ho-le-hoang-nhat
+2. Kéo code của một thành viên khác về máy để kiểm tra
+Nếu bạn muốn xem hoặc thử nghiệm code do một bạn trong nhóm viết (ví dụ: bạn Bùi Khải Triều), gõ lệnh:
+
+Bash
+git checkout bui-khai-trieu
+Muốn quay lại nhánh cá nhân của bạn:
+
+Bash
+git checkout ho-le-hoang-nhat
+3. Quy trình gộp (Merge) tất cả các nhánh vào nhánh chính main
+Khi cả 5 thành viên đã hoàn thành nhiệm vụ và sẵn sàng gộp toàn bộ dự án lại với nhau, bạn làm theo các bước sau:
+
+Chuyển sang nhánh chính main:
+
+Bash
+git checkout main
+Kéo code mới nhất từ GitHub về:
+
+Bash
+git pull origin main
+Lần lượt gộp nhánh của từng thành viên vào main:
+
+Bash
+git merge ho-le-hoang-nhat
+git merge bui-khai-trieu
+git merge chu-bao-khanh
+git merge dang-dang-khoa
+git merge ngo-pham-nguyet-minh
+Đẩy bộ mã nguồn tổng hợp hoàn chỉnh lên GitHub:
+
+Bash
+git push origin main
+tôi đã dẩy tất cả code lên git
+
+Tuyệt vời! Việc bạn đẩy tất cả mã nguồn (Model, Repository, Controller, View, file CSV và file AI Log) lên nhánh riêng ho-le-hoang-nhat trên GitHub nhóm ([https://github.com/khaitrieu-GT/Lab211-Group3](https://github.com/khaitrieu-GT/Lab211-Group3)) là bước hoàn thành vô cùng quan trọng đối với nhiệm vụ TV1 – Admin & Hạ tầng Dữ liệu Cốt lõi.
+
+Bây giờ mã nguồn của bạn đã an toàn trên GitHub, dưới đây là các bước tiếp theo để nhóm tiến hành gộp dự án và chuẩn bị báo cáo hoàn chỉnh:
+
+BƯỚC 1: XÁC NHẬN MÃ NGUỒN TRÊN GITHUB
+Bạn có thể truy cập vào link GitHub nhóm:
+👉 https://github.com/khaitrieu-GT/Lab211-Group3
+
+Bấm vào menu chuyển nhánh Branch → chọn ho-le-hoang-nhat.
+
+Kiểm tra xem các thư mục src/, data/ và ai_logs/ đã đầy đủ mã nguồn chuẩn tương thích JDK 8/17 của bạn chưa.
+
+BƯỚC 2: TẠO PULL REQUEST (PR) ĐỂ GỘP CODE VÀO main (NẾU DÙNG QUY TRÌNH PR)
+Nếu nhóm bạn áp dụng quy trình duyệt code (Code Review) trước khi gộp vào nhánh chính main:
+
+Trên giao diện GitHub của nhánh ho-le-hoang-nhat, bấm nút Compare & pull request.
+
+Đặt tiêu đề: Feat(TV1): Hoàn thiện nền tảng Data & Module Admin MVC (JDK 8/17 Compatible).
+
+Gán (Assign) trưởng nhóm hoặc các thành viên khác vào duyệt để gộp code vào main.
+
+BƯỚC 3: KIỂM TRA LẠI DỰ ÁN VÀ TÀI LIỆU BÁO CÁO CỦA BẠN (CHECKLIST HOÀN THÀNH)
+Để chuẩn bị tốt nhất cho buổi bảo vệ môn LAB211, bạn đã có đầy đủ các thành phần sau cho phần việc TV1:
+
+Mã nguồn hoàn chỉnh (Code base):
+
+Tầng Model: BaseEntity, User, Stadium, Section, Seat (chứa trường version phục vụ kiểm soát cạnh tranh lạc quan), SeatStatus.
+
+Tầng Repository: UserRepository, StadiumRepository, SeatRepository.
+
+Tầng Controller & View: AdminController, AdminView thiết kế chuẩn phân tầng MVC, xử lý ép kiểu an toàn cho cả JDK 8 và JDK 17.
+
+Sơ đồ kiến trúc (UML Diagram):
+
+Đã có sơ đồ UML Class Diagram vẽ chuẩn phân tầng View → Controller → Model theo đúng định dạng tênBiến : KiểuDữLiệu để đưa vào diagrams.net.
+
+Nhật ký AI (AI Reflection Log - Trọng số 30% điểm cá nhân):
+
+Đảm bảo file ai_logs/member1_ai_log.md đã được ghi chép lại các lượt tương tác AI, cách khắc phục lỗi biên dịch cross-JDK và thiết kế tối ưu hệ thống.   
+PNG
+
+Bây giờ bạn có thể nhắc các thành viên còn lại (TV2, TV3, TV4, TV5) hoàn thiện nhánh của họ để tiến hành gộp toàn bộ dự án vào nhánh main bất cứ lúc nào!
+
+họ đã hoàn thành
+
+bh gộp ngay
+
+Chào bạn, tuyệt vời! Việc tất cả 5 thành viên nhóm bạn đã hoàn thiện mã nguồn trên các nhánh riêng (bui-khai-trieu, chu-bao-khanh, dang-dang-khoa, ngo-pham-nguyet-minh, và ho-le-hoang-nhat của bạn) là cột mốc quan trọng nhất để tiến hành gộp (merge) dự án thành một bộ mã nguồn duy nhất trên nhánh chính main.
+
+Dưới đây là quy trình gộp code từng bước an toàn được thiết kế chuẩn xác theo cấu trúc dự án của nhóm bạn trên Terminal của VS Code.
+
+BƯỚC 1: CẬP NHẬT TẤT CẢ CÁC NHÁNH TỪ GITHUB VỀ MÁY
+Mở Terminal VS Code tại thư mục TicketBookingSystem, chạy lệnh kéo toàn bộ thông tin mới nhất của tất cả các nhánh từ GitHub:
+
+Bash
+git fetch --all
+BƯỚC 2: CHUYỂN SANG NHÁNH CHÍNH main VÀ CẬP NHẬT
+Chuyển sang nhánh chính main (nơi sẽ chứa bản tổng hợp toàn bộ code của 5 người):
+
+Bash
+git checkout main
+Cập nhật bản mới nhất của nhánh main từ remote GitHub:
+
+Bash
+git pull origin main
+BƯỚC 3: TIẾN HÀNH GỘP (MERGE) LẦN LƯỢT TỪNG NHÁNH CỦA 5 THÀNH VIÊN
+Nên gộp theo thứ tự phụ thuộc kiến trúc MVC (Hạ tầng/Data → Nghiệp vụ/Logic → Giao diện/Tích hợp) để hạn chế tối đa xung đột (Conflict):
+
+Gộp nhánh của TV1 (Nền tảng Admin & Data Foundation của bạn):
+
+
+Bash
+git merge ho-le-hoang-nhat
+Gộp nhánh của TV5 (Generic Repository, Authentication, AuditLog):
+
+
+Bash
+git merge ngo-pham-nguyet-minh
+Gộp nhánh của TV2 (Seller - Quản lý Trận đấu, Vé & Doanh thu):
+
+
+Bash
+git merge bui-khai-trieu
+Gộp nhánh của TV3 (Buyer - Sơ đồ ghế ASCII, Đặt vé):
+
+
+Bash
+git merge chu-bao-khanh
+Gộp nhánh của TV4 (Booking, Sync & Simulator Tool):
+
+
+Bash
+git merge dang-dang-khoa
+(Lưu ý: Nếu thành viên nào đặt tên nhánh remote hơi khác trên GitHub, bạn chỉ cần gõ đúng tên nhánh hiển thị trong danh sách git branch -a).
+
+BƯỚC 4: XỬ LÝ XUNG ĐỘT CODE (CONFLICT) NẾU CÓ
+Nếu hai thành viên cùng sửa đổi trên một file chung (ví dụ Main.java hoặc file CSV trong data/), Terminal sẽ thông báo dạng:
+CONFLICT (content): Merge conflict in src/Main.java
+
+Cách xử lý rất đơn giản trên VS Code:
+
+Mở file bị báo xung đột trên màn hình biên tập VS Code.
+
+Bạn sẽ thấy các nút lựa chọn màu xám nằm phía trên dòng code bị xung đột:
+
+Accept Current Change: Giữ lại code của nhánh main.
+
+Accept Incoming Change: Lấy code mới của thành viên vừa gộp.
+
+Accept Both Changes: Giữ lại cả 2 đoạn code (Khuyên dùng khi gộp file Main.java hoặc các menu ghép nối).
+
+Sau khi bấm chọn và sửa xong tất cả các file bị conflict, lưu file lại và chạy lệnh xác nhận gộp:
+
+Bash
+git add .
+git commit -m "Fix(Merge): Gop va xu ly xung dot ma nguon cua 5 thanh vien"
+BƯỚC 5: ĐẨY BỘ MÃ NGUỒN TỔNG HỢP LÊN NHÁNH main TÊN GITHUB
+Sau khi đã merge thành công toàn bộ 5 nhánh ở local, hãy đẩy bản chính thức hoàn chỉnh lên nhánh main trên GitHub:
+
+Bash
+git push origin main
+BƯỚC 6: CHẠY THỬ VÀ KIỂM TRA TÍNH TOÀN VẸN CỦA HỆ THỐNG
+Sau khi gộp xong, bạn hãy bấm F5 trong VS Code để chạy file src/Main.java và kiểm tra 3 tiêu chuẩn cốt lõi của đề tài:
+
+Kiểm tra dữ liệu CSV: Kiểm tra thư mục data/ đảm bảo các file stadiums.csv, sections.csv, seats.csv, users.csv, matches.csv, tickets.csv đã có đủ dữ liệu.
+
+Kiểm tra luồng MVC: Đăng nhập dưới các vai trò Admin, Seller, Buyer xem các menu điều khiển và chức năng hoạt động đồng bộ.
+
+Kiểm tra thư mục AI Log: Thư mục ai_logs/ có đủ 5 file nhật ký cá nhân (member1_ai_log.md đến member5_ai_log.md) để phục vụ 30% trọng số điểm AI Reflection.
+
+Bây giờ bạn có thể mở Terminal và bắt đầu thực hiện Bước 1 để hoàn tất việc gộp code toàn dự án!
+
+
+
+
+Gemini là một AI và có thể mắc sai sót.
