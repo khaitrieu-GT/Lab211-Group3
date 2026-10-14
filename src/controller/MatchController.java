@@ -23,7 +23,7 @@ public class MatchController {
     public List<Match> searchByName(String keyword) {
         String key = keyword == null ? "" : keyword.trim().toLowerCase();
         List<Match> result = new ArrayList<>();
-        for (Match match : getVisibleMatches()) {
+        for (Match match : this.getVisibleMatches()) {
             String text = (match.getName() + " " + match.getCompetition() + " "
                     + (match.getHomeTeam() == null ? "" : match.getHomeTeam().getName()) + " "
                     + (match.getAwayTeam() == null ? "" : match.getAwayTeam().getName())).toLowerCase();
@@ -37,7 +37,7 @@ public class MatchController {
     /** Khoa: searchByDate. */
     public List<Match> searchByDate(LocalDate date) {
         List<Match> result = new ArrayList<>();
-        for (Match match : getVisibleMatches()) {
+        for (Match match : this.getVisibleMatches()) {
             if (match.getMatchDate().equals(date)) {
                 result.add(match);
             }
@@ -48,12 +48,12 @@ public class MatchController {
     /** Khoa: findById - kem doi bong va san. */
     public Match findById(String id) {
         Match match = this.matchRepo.findById(id);
-        return match == null ? null : enrich(match);
+        return match == null ? null : this.enrich(match);
     }
 
     /** Khoa: viewMatch. */
     public Match viewMatch(String id) {
-        Match match = findById(id);
+        Match match = this.findById(id);
         if (match == null) {
             throw new BusinessException("Khong tim thay tran dau " + id);
         }
@@ -65,7 +65,7 @@ public class MatchController {
         List<Match> result = new ArrayList<>();
         for (Match match : this.matchRepo.findAll()) {
             if ((match.getStatus() == MatchStatus.OPEN || match.getStatus() == MatchStatus.UPCOMING) && !match.hasStarted()) {
-                result.add(enrich(match));
+                result.add(this.enrich(match));
             }
         }
         return result;
@@ -74,7 +74,7 @@ public class MatchController {
     public List<Match> getAllMatches() {
         List<Match> result = new ArrayList<>();
         for (Match match : this.matchRepo.findAll()) {
-            result.add(enrich(match));
+            result.add(this.enrich(match));
         }
         return result;
     }

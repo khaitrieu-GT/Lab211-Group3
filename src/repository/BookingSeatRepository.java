@@ -11,13 +11,23 @@ public class BookingSeatRepository extends CsvRepository<BookingSeat> {
     }
 
     @Override
-    protected BookingSeat parse(String line) {
+    public BookingSeat parse(String line) {
         return BookingSeat.fromCsvLine(line);
+    }
+
+    public List<BookingSeat> findByTicketId(String ticketId) {
+        List<BookingSeat> result = new ArrayList<>();
+        for (BookingSeat s : this.findAll()) {
+            if (s.getTicketId().equalsIgnoreCase(ticketId)) {
+                result.add(s);
+            }
+        }
+        return result;
     }
 
     public List<BookingSeat> findByBookingId(String bookingId) {
         List<BookingSeat> result = new ArrayList<>();
-        for (BookingSeat s : findAll()) {
+        for (BookingSeat s : this.findAll()) {
             if (s.getBookingId().equalsIgnoreCase(bookingId)) {
                 result.add(s);
             }

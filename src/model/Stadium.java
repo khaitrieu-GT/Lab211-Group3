@@ -79,7 +79,7 @@ public class Stadium extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.name, this.address, this.city, this.capacity, this.createdAt);
+        return CsvUtil.join(this.getId(), this.name, this.address, this.city, this.capacity, this.createdAt);
     }
 
     public static Stadium fromCsvLine(String csvLine) {
@@ -95,6 +95,6 @@ public class Stadium extends BaseEntity {
     @Override
     public String toString() {
         return String.format("%-6s | %-28s | %-28s | %-12s | Suc chua: %,d",
-                getId(), this.name, this.address, this.city, this.capacity);
+                this.getId(), this.name, this.address, this.city, this.capacity);
     }
 }

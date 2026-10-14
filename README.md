@@ -136,25 +136,56 @@ Pure Java (no framework), MVC + OOP, CSV file storage. Source compiles with Java
 ```text
 Lab211-Group3/
 ├── src/
-│   ├── Main.java          # Entry point: seeds data, opens MainView
+│   ├── Main.java          # Entry point: seeds data, then MainController.start()
 │   ├── model/             # Entities (BaseEntity → User/Admin/Seller/Buyer, Stadium, Section, Seat,
 │   │   └── enums/         #   Team, Match, Ticket, SeatHold, Booking, BookingSeat, Payment,
 │   │                      #   Transaction, ETicket, CancellationRequest, Notification, AuditLog)
-│   ├── view/              # Console UI: MainView, AdminView, SellerView, BuyerView, ProfileView, ...
-│   ├── controller/        # MainController, AdminController, SellerController, MatchController,
+│   ├── view/              # Console input/output only (no controller references, no business logic)
+│   ├── controller/        # Flow: MainController, AdminController, SellerController, BuyerController,
+│   │                      #   ProfileController (own the menu loops). Business: MatchController,
 │   │                      #   SeatController, BookingController, PaymentController, TicketController, ...
 │   ├── command/           # Command pattern (Lock/Unlock seat, Create/Confirm booking, Payment, ...)
-│   ├── repository/        # CsvRepository<T> + one repository per entity
-│   ├── service/           # Notification, AuditLog, PaymentGateway (simulated), Report, DataSeeder
+│   ├── repository/        # CsvRepository<T> (CRUD, atomic file write) + one repository per entity
+│   ├── service/           # Account, Notification, AuditLog, PaymentGateway (simulated), Report, DataSeeder
 │   ├── dto/               # SeatMap, SalesReport
 │   ├── exception/         # BusinessException
-│   └── util/              # AppConfig, CsvUtil, PasswordUtil, MoneyUtil
+│   └── util/              # AppConfig, CsvUtil, PasswordUtil, MoneyUtil, ValidationUtil
 ├── data/                  # CSV database (delete the folder to reset sample data)
 ├── docs/                  # Member documents, diagrams, MERGE_MAPPING.md
 ├── build.xml, nbproject/  # Ant / NetBeans project
 ├── run.bat, run.sh        # Compile & run scripts
 └── README.md
 ```
+
+### MVC flow (the program runs from the controller)
+
+```text
+Main ──► MainController.start()
+            │  login / register (MainView)
+            ├──► AdminController.start()  ──► AdminView, MatchView, OrderView, TicketView, ReportView
+            ├──► SellerController.start() ──► SellerView, MatchView, TicketView, OrderView, ReportView
+            └──► BuyerController.start()  ──► BuyerView, MatchView, SeatView, OrderView, TicketView
+                     │ (all three use ProfileController ──► ProfileView)
+                     ▼
+        business controllers / services ──► repository (CSV) ──► model
+```
+
+A view never calls a controller: the controller asks the view for input, runs the business
+logic (models + repositories), then hands the result back to the view to display.
+
+### CRUD per entity
+
+| Entity | Create | Read | Update | Delete |
+|---|---|---|---|---|
+| User (Admin) | Register buyer / create seller | List, search | Profile, lock/unlock, admin edit | Soft delete (`DELETED`, history kept) |
+| Stadium (Admin) | Add | List, layout | Name/address/city/capacity | Only if no match uses it (removes its sections & seats) |
+| Section (Admin) | Add | By stadium | Name/capacity, open/close | Only if no ticket uses it |
+| Seat (Admin) | Generate row | By section | Maintenance, lock/unlock | Only if no ticket uses it |
+| Team (Admin) | Add (unique name) | List | Name/logo/country | Only if no match uses it |
+| Match (Seller) | Add (no stadium/team clash) | Own matches | Name/date/time, open/close sale | Only if no booking yet |
+| Ticket (Seller) | One seat / whole section | By match | Price/type, stop/resume sale | Only if never booked |
+| Booking (Buyer) | Hold seats | History, pending | Extend hold, remove seat, pay | Cancel pending booking |
+| Cancellation request | Buyer submits | Buyer/Admin | Admin approve/reject | – |
 
 ## ▶️ How to Run
 

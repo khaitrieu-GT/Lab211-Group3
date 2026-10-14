@@ -50,7 +50,7 @@ public class Booking extends BaseEntity {
         if (this.status != BookingStatus.PENDING) {
             throw new IllegalStateException("Only PENDING booking can be confirmed");
         }
-        if (getActiveItems().isEmpty()) {
+        if (this.getActiveItems().isEmpty()) {
             throw new IllegalStateException("Booking has no seat");
         }
         this.status = BookingStatus.CONFIRMED;
@@ -84,12 +84,12 @@ public class Booking extends BaseEntity {
         if (this.status != BookingStatus.PENDING) {
             throw new IllegalStateException("Only PENDING booking can add seats");
         }
-        if (getActiveItems().size() >= AppConfig.MAX_TICKETS_PER_BOOKING) {
+        if (this.getActiveItems().size() >= AppConfig.MAX_TICKETS_PER_BOOKING) {
             throw new IllegalStateException("A booking can contain maximum "
                     + AppConfig.MAX_TICKETS_PER_BOOKING + " tickets");
         }
         this.items.add(item);
-        calculateTotal();
+        this.calculateTotal();
     }
 
     /** Khoa: Order.calculateTotal. */
@@ -114,7 +114,7 @@ public class Booking extends BaseEntity {
     }
 
     public boolean canAddMoreSeats() {
-        return getActiveItems().size() < AppConfig.MAX_TICKETS_PER_BOOKING;
+        return this.getActiveItems().size() < AppConfig.MAX_TICKETS_PER_BOOKING;
     }
 
     public boolean isPending() {
@@ -136,7 +136,7 @@ public class Booking extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.userId, this.matchId, this.status, this.totalAmount,
+        return CsvUtil.join(this.getId(), this.userId, this.matchId, this.status, this.totalAmount,
                 this.createdAt, this.updatedAt, this.expiresAt);
     }
 
@@ -157,7 +157,7 @@ public class Booking extends BaseEntity {
     @Override
     public String toString() {
         return String.format("%-7s | User: %-5s | Tran: %-5s | %15s | %-9s | %s",
-                getId(), this.userId, this.matchId, MoneyUtil.format(this.totalAmount), this.status,
+                this.getId(), this.userId, this.matchId, MoneyUtil.format(this.totalAmount), this.status,
                 this.createdAt == null ? "" : this.createdAt.withNano(0));
     }
 }

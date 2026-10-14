@@ -41,7 +41,7 @@ public class SeatHold extends BaseEntity {
 
     /** Trieu: SeatHold.crateHold (sua ten thanh createHold). */
     public void createHold() {
-        if (isExpired()) {
+        if (this.isExpired()) {
             throw new IllegalStateException("Cannot create an expired hold");
         }
         this.status = SeatHoldStatus.HOLD;
@@ -49,7 +49,7 @@ public class SeatHold extends BaseEntity {
 
     /** Trieu: SeatHold.extendHold. */
     public void extendHold() {
-        if (this.status != SeatHoldStatus.HOLD || isExpired()) {
+        if (this.status != SeatHoldStatus.HOLD || this.isExpired()) {
             throw new IllegalStateException("Only active HOLD can be extended");
         }
         if (this.extendCount >= AppConfig.MAX_HOLD_EXTENSIONS) {
@@ -68,7 +68,7 @@ public class SeatHold extends BaseEntity {
 
     /** Thanh toan thanh cong - phien giu chuyen thanh CONFIRMED. */
     public void confirmHold() {
-        if (this.status != SeatHoldStatus.HOLD || isExpired()) {
+        if (this.status != SeatHoldStatus.HOLD || this.isExpired()) {
             throw new IllegalStateException("Hold has expired, cannot confirm");
         }
         this.status = SeatHoldStatus.CONFIRMED;
@@ -87,7 +87,7 @@ public class SeatHold extends BaseEntity {
     }
 
     public boolean isActive() {
-        return this.status == SeatHoldStatus.HOLD && !isExpired();
+        return this.status == SeatHoldStatus.HOLD && !this.isExpired();
     }
 
     public long getRemainingSeconds() {
@@ -106,7 +106,7 @@ public class SeatHold extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.ticketId, this.userId, this.bookingId, this.holdToken, this.status,
+        return CsvUtil.join(this.getId(), this.ticketId, this.userId, this.bookingId, this.holdToken, this.status,
                 this.heldAt, this.expiresAt, this.extendCount);
     }
 

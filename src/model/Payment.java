@@ -70,7 +70,7 @@ public class Payment extends BaseEntity {
 
     /** Trieu: Payment.refund - hoan toan bo so tien con lai. */
     public void refund() {
-        refund(this.amount.subtract(this.refundedAmount));
+        this.refund(this.amount.subtract(this.refundedAmount));
     }
 
     /** Hoan mot phan (khi huy le tung ve trong booking). Hoan du thi chuyen REFUNDED. */
@@ -101,7 +101,7 @@ public class Payment extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.bookingId, this.amount, this.refundedAmount, this.method, this.status,
+        return CsvUtil.join(this.getId(), this.bookingId, this.amount, this.refundedAmount, this.method, this.status,
                 this.transactionId, this.paidAt, this.createdAt, this.updatedAt);
     }
 
@@ -123,7 +123,7 @@ public class Payment extends BaseEntity {
     @Override
     public String toString() {
         return String.format("%-7s | Booking: %-7s | %15s | Hoan: %15s | %-13s | %-8s | GD: %s",
-                getId(), this.bookingId, MoneyUtil.format(this.amount), MoneyUtil.format(this.refundedAmount),
+                this.getId(), this.bookingId, MoneyUtil.format(this.amount), MoneyUtil.format(this.refundedAmount),
                 this.method, this.status, this.transactionId == null ? "-" : this.transactionId);
     }
 }

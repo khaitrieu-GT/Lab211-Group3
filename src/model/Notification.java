@@ -43,7 +43,7 @@ public class Notification extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.userId, this.message, this.createdAt, this.isRead);
+        return CsvUtil.join(this.getId(), this.userId, this.message, this.createdAt, this.isRead);
     }
 
     public static Notification fromCsvLine(String csvLine) {

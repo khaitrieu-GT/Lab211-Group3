@@ -11,13 +11,13 @@ public class BookingRepository extends CsvRepository<Booking> {
     }
 
     @Override
-    protected Booking parse(String line) {
+    public Booking parse(String line) {
         return Booking.fromCsvLine(line);
     }
 
     public List<Booking> findByUserId(String userId) {
         List<Booking> result = new ArrayList<>();
-        for (Booking b : findAll()) {
+        for (Booking b : this.findAll()) {
             if (b.getUserId().equalsIgnoreCase(userId)) {
                 result.add(b);
             }
@@ -27,7 +27,7 @@ public class BookingRepository extends CsvRepository<Booking> {
 
     public List<Booking> findByMatchId(String matchId) {
         List<Booking> result = new ArrayList<>();
-        for (Booking b : findAll()) {
+        for (Booking b : this.findAll()) {
             if (b.getMatchId().equalsIgnoreCase(matchId)) {
                 result.add(b);
             }

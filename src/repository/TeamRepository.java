@@ -9,7 +9,7 @@ public class TeamRepository extends CsvRepository<Team> {
     }
 
     @Override
-    protected Team parse(String line) {
+    public Team parse(String line) {
         return Team.fromCsvLine(line);
     }
 }

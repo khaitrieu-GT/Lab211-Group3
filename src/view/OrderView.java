@@ -12,7 +12,7 @@ public class OrderView extends BaseView {
 
     /** Khoa: displayOrder. */
     public void displayOrder(Booking booking, List<SeatHold> holds) {
-        printSection("BOOKING " + booking.getId());
+        this.printSection("BOOKING " + booking.getId());
         System.out.println("Tran       : " + booking.getMatchId());
         System.out.println("Trang thai : " + booking.getStatus());
         System.out.println("Ghe:");
@@ -34,7 +34,7 @@ public class OrderView extends BaseView {
 
     /** Khoa: displayHistory. */
     public void displayHistory(List<Booking> bookings) {
-        printSection("LICH SU DAT VE");
+        this.printSection("LICH SU DAT VE");
         if (bookings.isEmpty()) {
             System.out.println("Chua co lich su dat ve.");
             return;
@@ -48,7 +48,7 @@ public class OrderView extends BaseView {
     }
 
     public void displayPayment(Payment payment) {
-        printSection("KET QUA THANH TOAN");
+        this.printSection("KET QUA THANH TOAN");
         System.out.println("Ma thanh toan : " + payment.getId());
         System.out.println("Phuong thuc   : " + payment.getMethod());
         System.out.println("So tien       : " + MoneyUtil.format(payment.getAmount()));

@@ -40,7 +40,7 @@ Code gốc vẫn còn nguyên trên từng nhánh và trong lịch sử merge c�
 | `model.User`: `register`, `login`, `updateProfile`, `toCsvLine`, `fromCsvLine`, `getUserId`, `getUsername`, `getRole` | `model/User` (`getUserId` → `getId`; `passwordHash` → `password` đã băm) |
 | `model.Notification`: `sendNotification`, `markAsRead`, `toCsvLine` | `model/Notification` (+ `fromCsvLine`, `NotificationRepository`) |
 | `model.AuditLog`: `logAction`, `toCsvLine`, `fromCsvLine` | `model/AuditLog` + `service/AuditService` (ghi log cho mọi thao tác quan trọng) |
-| `view.Main.main` | `view/MainView.start` (đăng nhập → điều hướng theo vai trò) |
+| `view.Main.main` | `controller/MainController.start` (đăng nhập → điều hướng sang controller theo vai trò) |
 | Tài liệu `MVC`, sơ đồ `.drawio.png` | `docs/ngo-pham-nguyet-minh/` |
 
 ## 3. Chu Bảo Khánh — `chu-bao-khanh` (Seller)
@@ -90,7 +90,7 @@ Code gốc vẫn còn nguyên trên từng nhánh và trong lịch sử merge c�
 
 | Gốc | Vị trí mới |
 |---|---|
-| `Main.main` (14 bước: ghế → zone → sân → user → booking → giữ ghế → thanh toán → giao dịch → xác nhận → vé → test double booking) | `controller/BookingController` (`holdSeat`, `payBooking`, `releaseExpiredHolds`, `simulateDoubleBooking`) + `view/BuyerView` |
+| `Main.main` (14 bước: ghế → zone → sân → user → booking → giữ ghế → thanh toán → giao dịch → xác nhận → vé → test double booking) | `controller/BookingController` (`holdSeat`, `payBooking`, `releaseExpiredHolds`, `simulateDoubleBooking`) + `controller/BuyerController` |
 | `command.Command` + 21 command | `command/` giữ **đủ 22 file, đúng tên**. `RefundPaymentCommand` thêm đuôi `.java` còn thiếu; `UpdateProfileCommand` sửa lỗi truyền sai tham số |
 | `LockSeatCommand`, `UnlockSeatCommand`, `MarkSeatAsSoldCommand` | đối tượng nhận lệnh là `Ticket` (ghế của trận) |
 | `CancelTicketCommand`, `GenerateTicketQrCommand` | đối tượng nhận lệnh là `ETicket` |

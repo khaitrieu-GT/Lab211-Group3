@@ -9,7 +9,7 @@ public class AuditLogRepository extends CsvRepository<AuditLog> {
     }
 
     @Override
-    protected AuditLog parse(String line) {
+    public AuditLog parse(String line) {
         return AuditLog.fromCsvLine(line);
     }
 }

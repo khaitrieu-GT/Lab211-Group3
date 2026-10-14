@@ -32,19 +32,19 @@ public class TicketView extends BaseView {
     }
 
     public void displayETickets(List<ETicket> tickets) {
-        printSection("VE DIEN TU CUA BAN");
-        printList(tickets, "Ban chua co ve nao.");
+        this.printSection("VE DIEN TU CUA BAN");
+        this.printList(tickets, "Ban chua co ve nao.");
     }
 
     /** Khanh: SellerView.showTickets - ve mo ban. */
     public void showTickets(List<Ticket> tickets) {
-        printSection("DANH SACH VE MO BAN");
-        printList(tickets, "Chua co ve.");
+        this.printSection("DANH SACH VE MO BAN");
+        this.printList(tickets, "Chua co ve.");
     }
 
     /** Khoa: displayCancellation. */
     public void displayCancellation(CancellationRequest request) {
-        printSection("YEU CAU HUY VE");
+        this.printSection("YEU CAU HUY VE");
         System.out.println("Ma yeu cau : " + request.getId());
         System.out.println("Ve         : " + request.getETicketId());
         System.out.println("Ly do      : " + request.getReason());
@@ -56,7 +56,7 @@ public class TicketView extends BaseView {
     }
 
     public void displayCancellations(List<CancellationRequest> requests) {
-        printSection("DANH SACH YEU CAU HUY VE");
-        printList(requests, "Khong co yeu cau nao.");
+        this.printSection("DANH SACH YEU CAU HUY VE");
+        this.printList(requests, "Khong co yeu cau nao.");
     }
 }

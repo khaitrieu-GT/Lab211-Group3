@@ -38,14 +38,14 @@ public class CancellationRequest extends BaseEntity {
 
     /** Khoa: approveRequest (viec huy ve/hoan tien do CancellationController dieu phoi). */
     public void approveRequest(String adminId) {
-        requirePending();
+        this.requirePending();
         this.status = CancellationStatus.APPROVED;
         this.handledBy = adminId;
     }
 
     /** Khoa: rejectRequest. */
     public void rejectRequest(String adminId, String note) {
-        requirePending();
+        this.requirePending();
         this.status = CancellationStatus.REJECTED;
         this.handledBy = adminId;
         this.note = note;
@@ -56,7 +56,7 @@ public class CancellationRequest extends BaseEntity {
     }
 
     private void requirePending() {
-        if (!isPending()) {
+        if (!this.isPending()) {
             throw new IllegalStateException("Request has already been handled (" + this.status + ")");
         }
     }
@@ -71,7 +71,7 @@ public class CancellationRequest extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.eTicketId, this.userId, this.reason, this.requestDate, this.status,
+        return CsvUtil.join(this.getId(), this.eTicketId, this.userId, this.reason, this.requestDate, this.status,
                 this.handledBy, this.note);
     }
 
@@ -91,7 +91,7 @@ public class CancellationRequest extends BaseEntity {
     @Override
     public String toString() {
         return String.format("%-7s | Ve: %-7s | User: %-5s | %-9s | Ly do: %s%s",
-                getId(), this.eTicketId, this.userId, this.status, this.reason,
+                this.getId(), this.eTicketId, this.userId, this.status, this.reason,
                 this.note == null ? "" : " | Ghi chu: " + this.note);
     }
 }

@@ -50,25 +50,25 @@ public class DataSeeder {
 
     public void seedIfMissing() {
         if (!this.userRepo.exists()) {
-            seedUsers();
+            this.seedUsers();
         }
         if (!this.stadiumRepo.exists()) {
-            seedStadiums();
+            this.seedStadiums();
         }
         if (!this.sectionRepo.exists()) {
-            seedSections();
+            this.seedSections();
         }
         if (!this.seatRepo.exists()) {
-            seedSeats();
+            this.seedSeats();
         }
         if (!this.teamRepo.exists()) {
-            seedTeams();
+            this.seedTeams();
         }
         if (!this.matchRepo.exists()) {
-            seedMatches();
+            this.seedMatches();
         }
         if (!this.ticketRepo.exists()) {
-            seedTickets();
+            this.seedTickets();
         }
         new BookingRepository().ensureFile();
         new BookingSeatRepository().ensureFile();
@@ -108,12 +108,12 @@ public class DataSeeder {
     }
 
     private void seedSeats() {
-        addRow("SEC01", "A", 5);
-        addRow("SEC01", "B", 5);
-        addRow("SEC02", "C", 5);
-        addRow("SEC02", "D", 5);
-        addRow("SEC03", "A", 3);
-        addRow("SEC04", "V", 2);
+        this.addRow("SEC01", "A", 5);
+        this.addRow("SEC01", "B", 5);
+        this.addRow("SEC02", "C", 5);
+        this.addRow("SEC02", "D", 5);
+        this.addRow("SEC03", "A", 3);
+        this.addRow("SEC04", "V", 2);
         // Ghe A3 khu VIP dang bao tri (Nhat: SEAT003 MAINTENANCE)
         this.seatRepo.updateStatus("SEAT003", SeatStatus.MAINTENANCE);
     }
@@ -147,8 +147,8 @@ public class DataSeeder {
     }
 
     private void seedTickets() {
-        createTicketsForMatch("M001", "STD02");
-        createTicketsForMatch("M002", "STD01");
+        this.createTicketsForMatch("M001", "STD02");
+        this.createTicketsForMatch("M002", "STD01");
     }
 
     private void createTicketsForMatch(String matchId, String stadiumId) {

@@ -86,11 +86,11 @@ public class BookingController {
 
     /** Buyer giu mot ghe; ghe duoc gom vao booking PENDING cua tran do (Khoa: createOrder). */
     public BookingSeat holdSeat(User user, String ticketId) {
-        releaseExpiredHolds();
-        Ticket ticket = requireTicket(ticketId);
-        requireOnSale(ticket.getMatchId());
-        Booking booking = getOrCreatePendingBooking(user, ticket.getMatchId());
-        return holdSeatInBooking(user, ticket, booking);
+        this.releaseExpiredHolds();
+        Ticket ticket = this.requireTicket(ticketId);
+        this.requireOnSale(ticket.getMatchId());
+        Booking booking = this.getOrCreatePendingBooking(user, ticket.getMatchId());
+        return this.holdSeatInBooking(user, ticket, booking);
     }
 
     private BookingSeat holdSeatInBooking(User user, Ticket ticket, Booking booking) {
@@ -98,7 +98,7 @@ public class BookingController {
             throw new BusinessException("Moi booking toi da " + AppConfig.MAX_TICKETS_PER_BOOKING + " ve.");
         }
         if (!ticket.isAvailable()) {
-            cancelIfEmpty(booking);
+            this.cancelIfEmpty(booking);
             throw new BusinessException("Ghe dang " + ticket.getStatus() + ", khong the chon.");
         }
 
@@ -106,7 +106,7 @@ public class BookingController {
         int expectedVersion = ticket.getVersion();
         new LockSeatCommand(ticket).execute();
         if (!this.ticketRepo.updateIfVersionMatches(ticket, expectedVersion)) {
-            cancelIfEmpty(booking);
+            this.cancelIfEmpty(booking);
             this.auditService.log(user.getUsername(), "HOLD " + ticket.getId() + " (bi tranh cho)", AuditService.FAILED);
             throw new BusinessException("Ghe vua duoc nguoi khac giu truoc. Vui long chon ghe khac.");
         }
@@ -123,7 +123,7 @@ public class BookingController {
         this.holdRepo.insert(hold);
 
         booking.addItem(item);
-        refreshExpiry(booking);
+        this.refreshExpiry(booking);
         this.bookingRepo.update(booking);
         this.auditService.log(user.getUsername(), "HOLD " + ticket.getId() + " -> " + booking.getId(), AuditService.SUCCESS);
         return item;
@@ -135,14 +135,14 @@ public class BookingController {
         if (item == null) {
             throw new BusinessException("Khong tim thay ghe " + bookingSeatId + " trong booking.");
         }
-        Booking booking = requireOwnPendingBooking(user, item.getBookingId());
-        releaseItem(item);
-        booking = loadBooking(booking.getId());
+        Booking booking = this.requireOwnPendingBooking(user, item.getBookingId());
+        this.releaseItem(item);
+        booking = this.loadBooking(booking.getId());
         booking.calculateTotal();
         if (booking.getActiveItems().isEmpty()) {
             new CancelBookingCommand(booking).execute();
         }
-        refreshExpiry(booking);
+        this.refreshExpiry(booking);
         this.bookingRepo.update(booking);
         this.auditService.log(user.getUsername(), "RELEASE " + item.getTicketId(), AuditService.SUCCESS);
         return booking;
@@ -150,17 +150,24 @@ public class BookingController {
 
     /** Gia han giu ghe them vai phut (Trieu: ExtendHoldCommand). */
     public Booking extendHold(User user, String bookingId) {
-        releaseExpiredHolds();
-        Booking booking = requireOwnPendingBooking(user, bookingId);
+        this.releaseExpiredHolds();
+        Booking booking = this.requireOwnPendingBooking(user, bookingId);
         List<SeatHold> holds = this.holdRepo.findHoldingByBooking(bookingId);
         if (holds.isEmpty()) {
             throw new BusinessException("Booking khong con ghe nao dang giu.");
+        }
+        // Kiem tra truoc toan bo ghe roi moi gia han: tranh truong hop ghe dau duoc gia han, ghe sau thi khong
+        for (SeatHold hold : holds) {
+            if (hold.getExtendCount() >= AppConfig.MAX_HOLD_EXTENSIONS) {
+                throw new BusinessException("Moi ghe chi duoc gia han " + AppConfig.MAX_HOLD_EXTENSIONS
+                        + " lan (ghe cua ve " + hold.getTicketId() + " da gia han).");
+            }
         }
         for (SeatHold hold : holds) {
             new ExtendHoldCommand(hold).execute();
             this.holdRepo.update(hold);
         }
-        refreshExpiry(booking);
+        this.refreshExpiry(booking);
         this.bookingRepo.update(booking);
         this.auditService.log(user.getUsername(), "EXTEND_HOLD " + bookingId, AuditService.SUCCESS);
         return booking;
@@ -168,11 +175,11 @@ public class BookingController {
 
     /** Huy booking dang cho thanh toan, tra tat ca ghe. */
     public void cancelPendingBooking(User user, String bookingId) {
-        Booking booking = requireOwnPendingBooking(user, bookingId);
+        Booking booking = this.requireOwnPendingBooking(user, bookingId);
         for (BookingSeat item : booking.getActiveItems()) {
-            releaseItem(item);
+            this.releaseItem(item);
         }
-        booking = loadBooking(bookingId);
+        booking = this.loadBooking(bookingId);
         booking.calculateTotal();
         new CancelBookingCommand(booking).execute();
         this.bookingRepo.update(booking);
@@ -184,16 +191,23 @@ public class BookingController {
     // ===================================================================
 
     public PaymentResult payBooking(User user, String bookingId, PaymentMethod method, boolean approvedByGateway) {
-        releaseExpiredHolds();
-        Booking booking = loadBooking(bookingId);
-        if (booking == null || !booking.getUserId().equalsIgnoreCase(user.getId())) {
+        Booking before = this.loadBooking(bookingId);
+        if (before == null || !before.getUserId().equalsIgnoreCase(user.getId())) {
             throw new BusinessException("Khong tim thay booking " + bookingId);
         }
+        int seatsBefore = before.getActiveItems().size();
+        this.releaseExpiredHolds();
+        Booking booking = this.loadBooking(bookingId);
         if (!booking.isPending()) {
             throw new BusinessException("Booking dang o trang thai " + booking.getStatus()
                     + " (co the da het thoi gian giu ghe), khong the thanh toan.");
         }
-        return finalizePayment(user, booking, method, approvedByGateway);
+        // Mot phan ghe vua het han giu: khong tu dong thu tien so ghe con lai ma bao Buyer xem lai don
+        if (booking.getActiveItems().size() < seatsBefore) {
+            throw new BusinessException("Mot so ghe vua het thoi gian giu va da duoc tra lai. Tong tien moi: "
+                    + MoneyUtil.format(booking.getTotalAmount()) + ". Vui long kiem tra lai booking roi thanh toan.");
+        }
+        return this.finalizePayment(user, booking, method, approvedByGateway);
     }
 
     private PaymentResult finalizePayment(User actor, Booking booking, PaymentMethod method, boolean approved) {
@@ -242,16 +256,16 @@ public class BookingController {
     // ===================================================================
 
     public PaymentResult sellAtCounter(User seller, String ticketId, String buyerUsername) {
-        releaseExpiredHolds();
+        this.releaseExpiredHolds();
         User buyer = this.userRepo.findByUsername(buyerUsername);
         if (buyer == null || buyer.getRole() != Role.BUYER || !buyer.isActive()) {
             throw new BusinessException("Khong tim thay tai khoan Buyer dang hoat dong: " + buyerUsername);
         }
-        Ticket ticket = requireTicket(ticketId);
-        requireOnSale(ticket.getMatchId());
-        Booking booking = createBooking(buyer, ticket.getMatchId());
-        holdSeatInBooking(buyer, ticket, booking);
-        PaymentResult result = finalizePayment(seller, loadBooking(booking.getId()), PaymentMethod.CASH, true);
+        Ticket ticket = this.requireTicket(ticketId);
+        this.requireOnSale(ticket.getMatchId());
+        Booking booking = this.createBooking(buyer, ticket.getMatchId());
+        this.holdSeatInBooking(buyer, ticket, booking);
+        PaymentResult result = this.finalizePayment(seller, this.loadBooking(booking.getId()), PaymentMethod.CASH, true);
         this.auditService.log(seller.getUsername(), "COUNTER_SALE " + ticketId + " -> " + buyerUsername, AuditService.SUCCESS);
         return result;
     }
@@ -284,7 +298,7 @@ public class BookingController {
             released++;
         }
         for (String bookingId : touchedBookings) {
-            Booking booking = loadBooking(bookingId);
+            Booking booking = this.loadBooking(bookingId);
             if (booking == null || !booking.isPending()) {
                 continue;
             }
@@ -294,7 +308,7 @@ public class BookingController {
                 this.notificationService.send(booking.getUserId(), "Booking " + bookingId
                         + " da het thoi gian giu ghe, cac ghe da duoc tra lai.");
             }
-            refreshExpiry(booking);
+            this.refreshExpiry(booking);
             this.bookingRepo.update(booking);
         }
         if (released > 0) {
@@ -309,12 +323,12 @@ public class BookingController {
 
     /** Hai Buyer cung luc giu mot ghe: chi mot nguoi thanh cong. Sau do tra ghe ve trang thai cu. */
     public List<String> simulateDoubleBooking(User admin, String ticketId) {
-        releaseExpiredHolds();
-        final Ticket ticket = requireTicket(ticketId);
+        this.releaseExpiredHolds();
+        final Ticket ticket = this.requireTicket(ticketId);
         if (!ticket.isAvailable()) {
             throw new BusinessException("Hay chon mot ve dang AVAILABLE de kiem thu (hien tai: " + ticket.getStatus() + ").");
         }
-        requireOnSale(ticket.getMatchId());
+        this.requireOnSale(ticket.getMatchId());
         List<User> buyers = new ArrayList<>();
         for (User u : this.userRepo.findByRole(Role.BUYER)) {
             if (u.isActive() && buyers.size() < 2) {
@@ -368,7 +382,7 @@ public class BookingController {
 
         // Don dep: tra ghe va xoa du lieu tam cua bai kiem thu (nhat ky audit van duoc giu)
         for (Booking booking : createdBookings) {
-            purgeTestBooking(booking.getId());
+            this.purgeTestBooking(booking.getId());
         }
         Ticket after = this.ticketRepo.findById(ticketId);
         log.add("Ket qua: chi 1 nguoi giu duoc ghe. Da tra ghe, trang thai hien tai: " + after.getStatus());
@@ -382,10 +396,10 @@ public class BookingController {
 
     /** Khoa: viewPurchaseHistory - moi nhat len dau. */
     public List<Booking> viewPurchaseHistory(User user) {
-        releaseExpiredHolds();
+        this.releaseExpiredHolds();
         List<Booking> result = new ArrayList<>();
         for (Booking booking : this.bookingRepo.findByUserId(user.getId())) {
-            result.add(attachItems(booking));
+            result.add(this.attachItems(booking));
         }
         Collections.reverse(result);
         return result;
@@ -393,7 +407,7 @@ public class BookingController {
 
     public List<Booking> getPendingBookings(User user) {
         List<Booking> result = new ArrayList<>();
-        for (Booking booking : viewPurchaseHistory(user)) {
+        for (Booking booking : this.viewPurchaseHistory(user)) {
             if (booking.isPending() && !booking.getActiveItems().isEmpty()) {
                 result.add(booking);
             }
@@ -404,7 +418,7 @@ public class BookingController {
     public Booking getPendingBooking(User user, String matchId) {
         for (Booking booking : this.bookingRepo.findByUserId(user.getId())) {
             if (booking.isPending() && booking.getMatchId().equalsIgnoreCase(matchId)) {
-                return attachItems(booking);
+                return this.attachItems(booking);
             }
         }
         return null;
@@ -418,7 +432,7 @@ public class BookingController {
         List<Booking> result = new ArrayList<>();
         for (Booking booking : this.bookingRepo.findAll()) {
             if (ids.contains(booking.getMatchId())) {
-                result.add(attachItems(booking));
+                result.add(this.attachItems(booking));
             }
         }
         Collections.reverse(result);
@@ -426,10 +440,10 @@ public class BookingController {
     }
 
     public List<Booking> getAllBookings() {
-        releaseExpiredHolds();
+        this.releaseExpiredHolds();
         List<Booking> result = new ArrayList<>();
         for (Booking booking : this.bookingRepo.findAll()) {
-            result.add(attachItems(booking));
+            result.add(this.attachItems(booking));
         }
         Collections.reverse(result);
         return result;
@@ -441,7 +455,7 @@ public class BookingController {
 
     public Booking loadBooking(String bookingId) {
         Booking booking = this.bookingRepo.findById(bookingId);
-        return booking == null ? null : attachItems(booking);
+        return booking == null ? null : this.attachItems(booking);
     }
 
     // ===================================================================
@@ -454,8 +468,8 @@ public class BookingController {
     }
 
     private Booking getOrCreatePendingBooking(User user, String matchId) {
-        Booking pending = getPendingBooking(user, matchId);
-        return pending != null ? pending : createBooking(user, matchId);
+        Booking pending = this.getPendingBooking(user, matchId);
+        return pending != null ? pending : this.createBooking(user, matchId);
     }
 
     private Booking createBooking(User user, String matchId) {
@@ -484,12 +498,12 @@ public class BookingController {
     }
 
     private void purgeTestBooking(String bookingId) {
-        Booking booking = loadBooking(bookingId);
+        Booking booking = this.loadBooking(bookingId);
         if (booking == null) {
             return;
         }
         for (BookingSeat item : booking.getItems()) {
-            releaseItem(item);
+            this.releaseItem(item);
             this.bookingSeatRepo.delete(item.getId());
         }
         for (SeatHold hold : this.holdRepo.findAll()) {
@@ -519,7 +533,7 @@ public class BookingController {
     }
 
     private Booking requireOwnPendingBooking(User user, String bookingId) {
-        Booking booking = loadBooking(bookingId);
+        Booking booking = this.loadBooking(bookingId);
         if (booking == null || !booking.getUserId().equalsIgnoreCase(user.getId())) {
             throw new BusinessException("Khong tim thay booking " + bookingId);
         }

@@ -12,14 +12,14 @@ public class SeatHoldRepository extends CsvRepository<SeatHold> {
     }
 
     @Override
-    protected SeatHold parse(String line) {
+    public SeatHold parse(String line) {
         return SeatHold.fromCsvLine(line);
     }
 
     /** Cac phien dang o trang thai HOLD (co the da qua han nhung chua duoc quet). */
     public List<SeatHold> findHolding() {
         List<SeatHold> result = new ArrayList<>();
-        for (SeatHold h : findAll()) {
+        for (SeatHold h : this.findAll()) {
             if (h.getStatus() == SeatHoldStatus.HOLD) {
                 result.add(h);
             }
@@ -29,7 +29,7 @@ public class SeatHoldRepository extends CsvRepository<SeatHold> {
 
     public List<SeatHold> findHoldingByBooking(String bookingId) {
         List<SeatHold> result = new ArrayList<>();
-        for (SeatHold h : findHolding()) {
+        for (SeatHold h : this.findHolding()) {
             if (h.getBookingId().equalsIgnoreCase(bookingId)) {
                 result.add(h);
             }
@@ -38,7 +38,7 @@ public class SeatHoldRepository extends CsvRepository<SeatHold> {
     }
 
     public SeatHold findHoldingByTicket(String ticketId) {
-        for (SeatHold h : findHolding()) {
+        for (SeatHold h : this.findHolding()) {
             if (h.getTicketId().equalsIgnoreCase(ticketId)) {
                 return h;
             }

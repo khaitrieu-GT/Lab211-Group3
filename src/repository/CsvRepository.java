@@ -3,12 +3,13 @@ package repository;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +18,18 @@ import model.BaseEntity;
 import util.AppConfig;
 
 /**
- * Repository dung chung doc/ghi CSV (tong quat hoa tu UserRepository/StadiumRepository/SeatRepository cua Nhat).
+ * Repository dung chung doc/ghi CSV - CRUD cho moi thuc the (tong quat hoa tu UserRepository/
+ * StadiumRepository/SeatRepository cua Nhat).
+ *
+ * <ul>
+ *   <li>Create : {@link #insert(BaseEntity)} - cap id tu dong (vd U001, TK0001)</li>
+ *   <li>Read   : {@link #findAll()}, {@link #findById(String)}</li>
+ *   <li>Update : {@link #update(BaseEntity)}</li>
+ *   <li>Delete : {@link #delete(String)}</li>
+ * </ul>
+ *
  * Moi file co mot khoa rieng dung chung cho moi instance, nen cac thao tac doc-sua-ghi la nguyen tu.
+ * Khi ghi, du lieu duoc ghi ra file tam roi moi thay the file that, tranh mat du lieu neu bi dung giua chung.
  */
 public abstract class CsvRepository<T extends BaseEntity> {
 
@@ -28,9 +39,9 @@ public abstract class CsvRepository<T extends BaseEntity> {
     private final String header;
     private final String idPrefix;
     private final int idWidth;
-    protected final Object lock;
+    private final Object lock;
 
-    protected CsvRepository(String fileName, String header, String idPrefix, int idWidth) {
+    public CsvRepository(String fileName, String header, String idPrefix, int idWidth) {
         this.filePath = AppConfig.DATA_DIR + File.separator + fileName;
         this.header = header;
         this.idPrefix = idPrefix;
@@ -40,30 +51,44 @@ public abstract class CsvRepository<T extends BaseEntity> {
         this.lock = existing == null ? newLock : existing;
     }
 
-    /** Chuyen mot dong CSV thanh doi tuong. */
-    protected abstract T parse(String line);
+    /** Chuyen mot dong CSV thanh doi tuong (moi lop con tu dinh nghia). */
+    public abstract T parse(String line);
+
+    /** Khoa cua file - lop con dung khi can doc-sua-ghi nhieu buoc nhu mot thao tac. */
+    public Object getLock() {
+        return this.lock;
+    }
+
+    public String getFilePath() {
+        return this.filePath;
+    }
+
+    // ============================ READ ============================
 
     public List<T> findAll() {
         synchronized (this.lock) {
             List<T> list = new ArrayList<>();
-            File file = new File(this.filePath);
-            if (!file.exists()) {
+            Path path = Paths.get(this.filePath);
+            if (!Files.exists(path)) {
                 return list;
             }
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+            try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
                 String line = br.readLine(); // bo qua dong tieu de
+                int lineNumber = 1;
                 while ((line = br.readLine()) != null) {
+                    lineNumber++;
                     if (line.trim().isEmpty()) {
                         continue;
                     }
                     try {
-                        T entity = parse(line);
+                        T entity = this.parse(line);
                         if (entity != null) {
                             list.add(entity);
+                        } else {
+                            System.err.println("[CSV] Thieu cot o dong " + lineNumber + " cua " + this.filePath);
                         }
                     } catch (RuntimeException e) {
-                        System.err.println("[CSV] Bo qua dong loi trong " + this.filePath + ": " + line);
+                        System.err.println("[CSV] Bo qua dong " + lineNumber + " loi trong " + this.filePath + ": " + line);
                     }
                 }
             } catch (IOException e) {
@@ -73,20 +98,101 @@ public abstract class CsvRepository<T extends BaseEntity> {
         }
     }
 
+    public T findById(String id) {
+        if (id == null) {
+            return null;
+        }
+        for (T entity : this.findAll()) {
+            if (entity.getId().equalsIgnoreCase(id.trim())) {
+                return entity;
+            }
+        }
+        return null;
+    }
+
+    public boolean existsById(String id) {
+        return this.findById(id) != null;
+    }
+
+    public boolean exists() {
+        return new File(this.filePath).exists();
+    }
+
+    // ============================ CREATE ============================
+
+    /** Them moi; neu chua co id thi cap id tu dong (trong cung khoa de khong trung id). */
+    public T insert(T entity) {
+        synchronized (this.lock) {
+            List<T> list = this.findAll();
+            if (entity.getId() == null || entity.getId().isEmpty()) {
+                entity.setId(this.nextId(list));
+            } else {
+                for (T existing : list) {
+                    if (existing.getId().equalsIgnoreCase(entity.getId())) {
+                        throw new IllegalArgumentException("Duplicate id: " + entity.getId());
+                    }
+                }
+            }
+            list.add(entity);
+            if (!this.saveAll(list)) {
+                throw new IllegalStateException("Cannot save " + this.filePath);
+            }
+            return entity;
+        }
+    }
+
+    // ============================ UPDATE ============================
+
+    public boolean update(T entity) {
+        synchronized (this.lock) {
+            List<T> list = this.findAll();
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getId().equalsIgnoreCase(entity.getId())) {
+                    list.set(i, entity);
+                    return this.saveAll(list);
+                }
+            }
+            return false;
+        }
+    }
+
+    // ============================ DELETE ============================
+
+    public boolean delete(String id) {
+        if (id == null) {
+            return false;
+        }
+        synchronized (this.lock) {
+            List<T> list = this.findAll();
+            boolean removed = list.removeIf(entity -> entity.getId().equalsIgnoreCase(id.trim()));
+            return removed && this.saveAll(list);
+        }
+    }
+
+    // ============================ FILE ============================
+
+    /** Ghi toan bo danh sach: ghi file tam roi thay the file that. */
     public boolean saveAll(List<T> list) {
         synchronized (this.lock) {
-            File file = new File(this.filePath);
-            File parent = file.getParentFile();
-            if (parent != null && !parent.exists() && !parent.mkdirs()) {
-                return false;
-            }
-            try (BufferedWriter bw = new BufferedWriter(
-                    new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
-                bw.write(this.header);
-                bw.newLine();
-                for (T entity : list) {
-                    bw.write(entity.toCsvLine());
+            Path target = Paths.get(this.filePath);
+            Path tmp = Paths.get(this.filePath + ".tmp");
+            try {
+                Path parent = target.toAbsolutePath().getParent();
+                if (parent != null) {
+                    Files.createDirectories(parent);
+                }
+                try (BufferedWriter bw = Files.newBufferedWriter(tmp, StandardCharsets.UTF_8)) {
+                    bw.write(this.header);
                     bw.newLine();
+                    for (T entity : list) {
+                        bw.write(entity.toCsvLine());
+                        bw.newLine();
+                    }
+                }
+                try {
+                    Files.move(tmp, target, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                } catch (AtomicMoveNotSupportedException e) {
+                    Files.move(tmp, target, StandardCopyOption.REPLACE_EXISTING);
                 }
                 return true;
             } catch (IOException e) {
@@ -99,86 +205,13 @@ public abstract class CsvRepository<T extends BaseEntity> {
     /** Tao file chi co tieu de neu chua ton tai. */
     public void ensureFile() {
         synchronized (this.lock) {
-            if (!new File(this.filePath).exists()) {
-                saveAll(new ArrayList<>());
+            if (!this.exists()) {
+                this.saveAll(new ArrayList<>());
             }
         }
     }
 
-    public boolean exists() {
-        return new File(this.filePath).exists();
-    }
-
-    public T findById(String id) {
-        if (id == null) {
-            return null;
-        }
-        for (T entity : findAll()) {
-            if (entity.getId().equalsIgnoreCase(id.trim())) {
-                return entity;
-            }
-        }
-        return null;
-    }
-
-    /** Them moi; neu chua co id thi cap id tu dong (trong cung khoa de khong trung id). */
-    public T insert(T entity) {
-        synchronized (this.lock) {
-            List<T> list = findAll();
-            if (entity.getId() == null || entity.getId().isEmpty()) {
-                entity.setId(nextId(list));
-            } else {
-                for (T existing : list) {
-                    if (existing.getId().equalsIgnoreCase(entity.getId())) {
-                        throw new IllegalArgumentException("Duplicate id: " + entity.getId());
-                    }
-                }
-            }
-            list.add(entity);
-            if (!saveAll(list)) {
-                throw new IllegalStateException("Cannot save " + this.filePath);
-            }
-            return entity;
-        }
-    }
-
-    /** Nhat: StadiumRepository.add. */
-    public boolean add(T entity) {
-        try {
-            insert(entity);
-            return true;
-        } catch (RuntimeException e) {
-            return false;
-        }
-    }
-
-    public boolean update(T entity) {
-        synchronized (this.lock) {
-            List<T> list = findAll();
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i).getId().equalsIgnoreCase(entity.getId())) {
-                    list.set(i, entity);
-                    return saveAll(list);
-                }
-            }
-            return false;
-        }
-    }
-
-    public boolean delete(String id) {
-        synchronized (this.lock) {
-            List<T> list = findAll();
-            boolean removed = false;
-            for (int i = list.size() - 1; i >= 0; i--) {
-                if (list.get(i).getId().equalsIgnoreCase(id)) {
-                    list.remove(i);
-                    removed = true;
-                }
-            }
-            return removed && saveAll(list);
-        }
-    }
-
+    /** Id ke tiep = so lon nhat hien co + 1 (khong dung lai id da xoa). */
     private String nextId(List<T> list) {
         int max = 0;
         for (T entity : list) {

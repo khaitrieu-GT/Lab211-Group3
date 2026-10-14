@@ -2,6 +2,8 @@ package controller;
 
 import dto.SeatMap;
 import exception.BusinessException;
+import java.util.ArrayList;
+import java.util.List;
 import model.Booking;
 import model.BookingSeat;
 import model.Match;
@@ -44,20 +46,38 @@ public class SeatController {
         return map;
     }
 
-    /** Khoa: selectSeat(match, row, number) - giu ghe theo hang + so. */
-    public BookingSeat selectSeat(User user, String matchId, String row, int number) {
+    /**
+     * Khoa: selectSeat(match, row, number) - giu ghe theo hang + so.
+     * sectionId co the null; khi cung ten hang (vd "A") xuat hien o nhieu khu thi bat buoc nhap ma khu,
+     * tranh giu nham ghe cua khu khac.
+     */
+    public BookingSeat selectSeat(User user, String matchId, String sectionId, String row, int number) {
         Match match = this.matchController.viewMatch(matchId);
-        Seat target = null;
+        String label = row.trim().toUpperCase() + number;
+        List<Seat> candidates = new ArrayList<>();
         for (Section section : this.sectionRepo.findByStadiumId(match.getStadiumId())) {
+            if (sectionId != null && !section.getId().equalsIgnoreCase(sectionId.trim())) {
+                continue;
+            }
             for (Seat seat : this.seatRepo.findBySectionId(section.getId())) {
                 if (seat.getRowNumber().equalsIgnoreCase(row.trim()) && seat.getSeatNumber() == number) {
-                    target = seat;
+                    candidates.add(seat);
                 }
             }
         }
-        if (target == null) {
-            throw new BusinessException("Khong co ghe " + row + number + " trong san.");
+        if (candidates.isEmpty()) {
+            throw new BusinessException("Khong co ghe " + label
+                    + (sectionId == null ? "" : " trong khu " + sectionId.toUpperCase()) + " cua san.");
         }
+        if (candidates.size() > 1) {
+            StringBuilder sections = new StringBuilder();
+            for (Seat seat : candidates) {
+                sections.append(sections.length() == 0 ? "" : ", ").append(seat.getSectionId());
+            }
+            throw new BusinessException("Ghe " + label + " co o nhieu khu (" + sections
+                    + "). Vui long nhap kem ma khu, vd " + candidates.get(0).getSectionId() + "-" + label + ".");
+        }
+        Seat target = candidates.get(0);
         if (!target.isAvailable()) {
             throw new BusinessException("Ghe " + target.getLabel() + " dang " + target.getStatus() + ".");
         }

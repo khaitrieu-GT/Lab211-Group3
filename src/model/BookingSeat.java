@@ -87,7 +87,7 @@ public class BookingSeat extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.bookingId, this.ticketId, this.seatLabel, this.sectionId, this.price,
+        return CsvUtil.join(this.getId(), this.bookingId, this.ticketId, this.seatLabel, this.sectionId, this.price,
                 this.status, this.createdAt);
     }
 
@@ -105,6 +105,6 @@ public class BookingSeat extends BaseEntity {
     @Override
     public String toString() {
         return String.format("%-7s | Khu %-6s | Ghe %-5s | %15s | %s",
-                getId(), this.sectionId, this.seatLabel, MoneyUtil.format(this.price), this.status);
+                this.getId(), this.sectionId, this.seatLabel, MoneyUtil.format(this.price), this.status);
     }
 }

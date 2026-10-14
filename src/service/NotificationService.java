@@ -24,7 +24,7 @@ public class NotificationService {
     /** Gui cho tat ca nguoi dung thuoc mot vai tro (vd: bao Admin co yeu cau huy ve). */
     public void sendToRole(Role role, String message) {
         for (User user : this.userRepo.findByRole(role)) {
-            send(user.getId(), message);
+            this.send(user.getId(), message);
         }
     }
 

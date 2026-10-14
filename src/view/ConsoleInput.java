@@ -31,7 +31,7 @@ public final class ConsoleInput {
 
     public String readNonEmpty(String message) {
         while (true) {
-            String value = readString(message);
+            String value = this.readString(message);
             if (!value.isEmpty()) {
                 return value;
             }
@@ -43,7 +43,7 @@ public final class ConsoleInput {
     public int readInt(String message) {
         while (true) {
             try {
-                return Integer.parseInt(readString(message));
+                return Integer.parseInt(this.readString(message));
             } catch (NumberFormatException e) {
                 System.out.println("Vui long nhap so nguyen hop le.");
             }
@@ -52,7 +52,7 @@ public final class ConsoleInput {
 
     public int readIntInRange(String message, int min, int max) {
         while (true) {
-            int value = readInt(message);
+            int value = this.readInt(message);
             if (value >= min && value <= max) {
                 return value;
             }
@@ -63,7 +63,7 @@ public final class ConsoleInput {
     public BigDecimal readMoney(String message) {
         while (true) {
             try {
-                BigDecimal value = new BigDecimal(readString(message).replace(",", ""));
+                BigDecimal value = new BigDecimal(this.readString(message).replace(",", ""));
                 if (value.signum() >= 0) {
                     return value;
                 }
@@ -77,7 +77,7 @@ public final class ConsoleInput {
     /** Bo trong de tra ve null (dung gia mac dinh). */
     public BigDecimal readOptionalMoney(String message) {
         while (true) {
-            String text = readString(message).replace(",", "");
+            String text = this.readString(message).replace(",", "");
             if (text.isEmpty()) {
                 return null;
             }
@@ -96,7 +96,7 @@ public final class ConsoleInput {
     public LocalDate readDate(String message) {
         while (true) {
             try {
-                return LocalDate.parse(readString(message));
+                return LocalDate.parse(this.readString(message));
             } catch (DateTimeParseException e) {
                 System.out.println("Ngay khong hop le, dinh dang yyyy-MM-dd.");
             }
@@ -105,7 +105,7 @@ public final class ConsoleInput {
 
     public LocalDate readOptionalDate(String message) {
         while (true) {
-            String text = readString(message);
+            String text = this.readString(message);
             if (text.isEmpty()) {
                 return null;
             }
@@ -120,7 +120,7 @@ public final class ConsoleInput {
     public LocalTime readTime(String message) {
         while (true) {
             try {
-                return LocalTime.parse(readString(message));
+                return LocalTime.parse(this.readString(message));
             } catch (DateTimeParseException e) {
                 System.out.println("Gio khong hop le, dinh dang HH:mm.");
             }
@@ -129,7 +129,7 @@ public final class ConsoleInput {
 
     public LocalTime readOptionalTime(String message) {
         while (true) {
-            String text = readString(message);
+            String text = this.readString(message);
             if (text.isEmpty()) {
                 return null;
             }
@@ -143,7 +143,7 @@ public final class ConsoleInput {
 
     public boolean readYesNo(String message) {
         while (true) {
-            String value = readString(message + " (Y/N): ");
+            String value = this.readString(message + " (Y/N): ");
             if ("Y".equalsIgnoreCase(value)) {
                 return true;
             }
