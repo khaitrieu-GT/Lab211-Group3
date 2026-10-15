@@ -19,7 +19,7 @@ public class SeatView extends BaseView {
     /** Khoa: displaySeatMap. */
     public void displaySeatMap(SeatMap map) {
         Stadium stadium = map.getStadium();
-        printSection("SO DO SAN - " + map.getMatch().getName());
+        this.printSection("SO DO SAN - " + map.getMatch().getName());
         System.out.println("San: " + stadium.getName() + " | " + stadium.getAddress() + ", " + stadium.getCity());
         System.out.println("Chu thich: [A1 ] trong   [A1 H] dang giu   [A1 X] da ban   [A1 -] khong ban/khoa");
         for (Section section : stadium.getSections()) {
@@ -39,7 +39,7 @@ public class SeatView extends BaseView {
                 StringBuilder line = new StringBuilder("  Hang " + row.getKey() + ": ");
                 for (Seat seat : row.getValue()) {
                     Ticket ticket = map.getTicket(seat);
-                    String mark = symbol(seat, ticket, section);
+                    String mark = this.symbol(seat, ticket, section);
                     if (mark.equals(" ")) {
                         available++;
                     }
@@ -53,7 +53,7 @@ public class SeatView extends BaseView {
 
     /** Khoa: displaySelectionResult. */
     public void displaySelectionResult(BookingSeat item) {
-        printSuccess("Da giu ghe " + item.getSeatLabel() + " (khu " + item.getSectionId() + ") - "
+        this.printSuccess("Da giu ghe " + item.getSeatLabel() + " (khu " + item.getSectionId() + ") - "
                 + MoneyUtil.format(item.getPrice()));
     }
 

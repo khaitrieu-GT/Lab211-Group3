@@ -12,13 +12,13 @@ public class SectionRepository extends CsvRepository<Section> {
     }
 
     @Override
-    protected Section parse(String line) {
+    public Section parse(String line) {
         return Section.fromCsvLine(line);
     }
 
     public List<Section> findByStadiumId(String stadiumId) {
         List<Section> result = new ArrayList<>();
-        for (Section s : findAll()) {
+        for (Section s : this.findAll()) {
             if (s.getStadiumId().equalsIgnoreCase(stadiumId)) {
                 result.add(s);
             }

@@ -30,7 +30,7 @@ public class Team extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.name, this.logo, this.country);
+        return CsvUtil.join(this.getId(), this.name, this.logo, this.country);
     }
 
     public static Team fromCsvLine(String csvLine) {
@@ -43,6 +43,6 @@ public class Team extends BaseEntity {
 
     @Override
     public String toString() {
-        return this.name + " (" + this.country + ")";
+        return String.format("%-5s | %-22s | %s", this.getId(), this.name, this.country);
     }
 }

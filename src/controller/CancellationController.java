@@ -88,10 +88,17 @@ public class CancellationController {
      * Huy het moi ve trong booking thi booking chuyen CANCELLED va hoan toan bo.
      */
     public Payment approveRequest(User admin, String requestId) {
-        CancellationRequest request = requirePending(requestId);
+        CancellationRequest request = this.requirePending(requestId);
         ETicket eTicket = this.eTicketRepo.findById(request.getETicketId());
         if (eTicket == null) {
             throw new BusinessException("Ve dien tu cua yeu cau khong con ton tai.");
+        }
+        if (!eTicket.validateTicket()) {
+            throw new BusinessException("Ve dang o trang thai " + eTicket.getStatus() + " (vd da check-in), hay tu choi yeu cau.");
+        }
+        Match match = this.matchController.findById(eTicket.getMatchId());
+        if (match != null && match.hasStarted()) {
+            throw new BusinessException("Tran dau da dien ra, khong the huy ve/hoan tien. Hay tu choi yeu cau.");
         }
 
         new CancelTicketCommand(eTicket).execute();
@@ -125,7 +132,7 @@ public class CancellationController {
 
     /** Khoa: rejectRequest. */
     public void rejectRequest(User admin, String requestId, String note) {
-        CancellationRequest request = requirePending(requestId);
+        CancellationRequest request = this.requirePending(requestId);
         request.rejectRequest(admin.getId(), note);
         this.requestRepo.update(request);
         this.notificationService.send(request.getUserId(), "Yeu cau huy ve " + request.getETicketId()

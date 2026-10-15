@@ -14,13 +14,22 @@ public class UserRepository extends CsvRepository<User> {
     }
 
     @Override
-    protected User parse(String line) {
+    public User parse(String line) {
         return User.fromCsvLine(line);
     }
 
     public User findByUsername(String username) {
-        for (User u : findAll()) {
+        for (User u : this.findAll()) {
             if (u.getUsername().equalsIgnoreCase(username.trim())) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public User findByEmail(String email) {
+        for (User u : this.findAll()) {
+            if (u.getEmail() != null && u.getEmail().equalsIgnoreCase(email.trim())) {
                 return u;
             }
         }
@@ -29,7 +38,7 @@ public class UserRepository extends CsvRepository<User> {
 
     public List<User> findByRole(Role role) {
         List<User> result = new ArrayList<>();
-        for (User u : findAll()) {
+        for (User u : this.findAll()) {
             if (u.getRole() == role) {
                 result.add(u);
             }
@@ -39,8 +48,8 @@ public class UserRepository extends CsvRepository<User> {
 
     /** Nhat: updateUserStatus. */
     public boolean updateUserStatus(String userId, UserStatus newStatus) {
-        synchronized (this.lock) {
-            User user = findById(userId);
+        synchronized (this.getLock()) {
+            User user = this.findById(userId);
             if (user == null) {
                 return false;
             }
@@ -51,7 +60,7 @@ public class UserRepository extends CsvRepository<User> {
             } else {
                 user.setStatus(newStatus);
             }
-            return update(user);
+            return this.update(user);
         }
     }
 }

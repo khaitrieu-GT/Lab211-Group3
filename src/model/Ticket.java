@@ -47,7 +47,7 @@ public class Ticket extends BaseEntity {
         if (this.status != TicketStatus.CANCELLED && this.status != TicketStatus.SOLD) {
             throw new IllegalStateException("Only CANCELLED/SOLD ticket can be put on sale again");
         }
-        changeStatus(TicketStatus.AVAILABLE);
+        this.changeStatus(TicketStatus.AVAILABLE);
     }
 
     /** Khanh: Ticket.stopSale. */
@@ -55,7 +55,7 @@ public class Ticket extends BaseEntity {
         if (this.status != TicketStatus.AVAILABLE) {
             throw new IllegalStateException("Only AVAILABLE ticket can stop sale (current: " + this.status + ")");
         }
-        changeStatus(TicketStatus.CANCELLED);
+        this.changeStatus(TicketStatus.CANCELLED);
     }
 
     /** Trieu: Seat.lock - giu cho ghe cua tran. */
@@ -63,7 +63,7 @@ public class Ticket extends BaseEntity {
         if (this.status != TicketStatus.AVAILABLE) {
             throw new IllegalStateException("Seat ticket " + this.seatId + " is not available");
         }
-        changeStatus(TicketStatus.HOLD);
+        this.changeStatus(TicketStatus.HOLD);
     }
 
     /** Trieu: Seat.unlock - tra ghe khi bo chon / het han giu. */
@@ -71,7 +71,7 @@ public class Ticket extends BaseEntity {
         if (this.status != TicketStatus.HOLD) {
             throw new IllegalStateException("Seat ticket " + this.seatId + " cannot be unlocked from " + this.status);
         }
-        changeStatus(TicketStatus.AVAILABLE);
+        this.changeStatus(TicketStatus.AVAILABLE);
     }
 
     /** Trieu: Seat.markAsSold / Khoa: Seat.sell - thanh toan thanh cong HOLD -> SOLD. */
@@ -79,7 +79,7 @@ public class Ticket extends BaseEntity {
         if (this.status != TicketStatus.HOLD) {
             throw new IllegalStateException("Seat ticket " + this.seatId + " must be HOLD before SOLD");
         }
-        changeStatus(TicketStatus.SOLD);
+        this.changeStatus(TicketStatus.SOLD);
     }
 
     /** Khoa + Trieu: isAvailable. */
@@ -127,7 +127,7 @@ public class Ticket extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.matchId, this.seatId, this.sectionId, this.ticketType, this.price,
+        return CsvUtil.join(this.getId(), this.matchId, this.seatId, this.sectionId, this.ticketType, this.price,
                 this.status, this.version, this.updatedAt);
     }
 
@@ -147,6 +147,6 @@ public class Ticket extends BaseEntity {
     public String toString() {
         String seatLabel = this.seat != null ? this.seat.getLabel() : this.seatId;
         return String.format("%-7s | Tran: %-5s | Khu: %-6s | Ghe %-5s | %-8s | %15s | %-9s",
-                getId(), this.matchId, this.sectionId, seatLabel, this.ticketType, MoneyUtil.format(this.price), this.status);
+                this.getId(), this.matchId, this.sectionId, seatLabel, this.ticketType, MoneyUtil.format(this.price), this.status);
     }
 }

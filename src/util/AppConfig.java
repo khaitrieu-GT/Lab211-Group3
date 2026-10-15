@@ -23,6 +23,9 @@ public final class AppConfig {
     /** So ve toi da trong mot booking (Khanh: BookingTransaction.addTicket). */
     public static final int MAX_TICKETS_PER_BOOKING = 4;
 
+    /** Khoang thoi gian toi thieu (gio) giua hai tran tren cung mot san. */
+    public static final int MATCH_SLOT_HOURS = 3;
+
     /** Ma phan hoi thanh cong cua cong thanh toan (Trieu: Transaction.process). */
     public static final String GATEWAY_SUCCESS_CODE = "00";
 

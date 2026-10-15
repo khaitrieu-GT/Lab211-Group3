@@ -11,13 +11,13 @@ public class CancellationRequestRepository extends CsvRepository<CancellationReq
     }
 
     @Override
-    protected CancellationRequest parse(String line) {
+    public CancellationRequest parse(String line) {
         return CancellationRequest.fromCsvLine(line);
     }
 
     public List<CancellationRequest> findByUserId(String userId) {
         List<CancellationRequest> result = new ArrayList<>();
-        for (CancellationRequest r : findAll()) {
+        for (CancellationRequest r : this.findAll()) {
             if (r.getUserId().equalsIgnoreCase(userId)) {
                 result.add(r);
             }
@@ -27,7 +27,7 @@ public class CancellationRequestRepository extends CsvRepository<CancellationReq
 
     public List<CancellationRequest> findPending() {
         List<CancellationRequest> result = new ArrayList<>();
-        for (CancellationRequest r : findAll()) {
+        for (CancellationRequest r : this.findAll()) {
             if (r.isPending()) {
                 result.add(r);
             }
@@ -36,7 +36,7 @@ public class CancellationRequestRepository extends CsvRepository<CancellationReq
     }
 
     public CancellationRequest findPendingByETicket(String eTicketId) {
-        for (CancellationRequest r : findPending()) {
+        for (CancellationRequest r : this.findPending()) {
             if (r.getETicketId().equalsIgnoreCase(eTicketId)) {
                 return r;
             }

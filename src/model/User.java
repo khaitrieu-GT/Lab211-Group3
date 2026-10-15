@@ -6,6 +6,7 @@ import model.enums.Role;
 import model.enums.UserStatus;
 import util.CsvUtil;
 import util.PasswordUtil;
+import util.ValidationUtil;
 
 /**
  * Tai khoan nguoi dung - hop nhat User cua Nhat, Minh, Khoa, Trieu.
@@ -23,11 +24,11 @@ public abstract class User extends BaseEntity {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    protected User() {
+    public User() {
         super();
     }
 
-    protected User(String id, String username, String password, String fullName,
+    public User(String id, String username, String password, String fullName,
                    String email, String phone, String avatar, UserStatus status) {
         super(id);
         this.username = username;
@@ -62,7 +63,7 @@ public abstract class User extends BaseEntity {
 
     /** Kiem tra du lieu dang ky hop le (Minh: register). */
     public boolean register() {
-        if (this.username == null || !this.username.matches("[A-Za-z0-9_.]{3,30}")) {
+        if (!ValidationUtil.isValidUsername(this.username)) {
             return false;
         }
         if (this.password == null || this.password.isEmpty()) {
@@ -71,7 +72,7 @@ public abstract class User extends BaseEntity {
         if (this.fullName == null || this.fullName.trim().isEmpty()) {
             return false;
         }
-        if (this.email == null || !this.email.matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+")) {
+        if (!ValidationUtil.isValidEmail(this.email)) {
             return false;
         }
         this.status = UserStatus.ACTIVE;
@@ -87,8 +88,8 @@ public abstract class User extends BaseEntity {
 
     /** Thong tin ho so dang chuoi (Trieu: getProfile). */
     public String getProfile() {
-        return "User{id=" + getId() + ", username='" + this.username + "', name='" + this.fullName
-                + "', email='" + this.email + "', phone='" + this.phone + "', role=" + getRole()
+        return "User{id=" + this.getId() + ", username='" + this.username + "', name='" + this.fullName
+                + "', email='" + this.email + "', phone='" + this.phone + "', role=" + this.getRole()
                 + ", status=" + this.status + "}";
     }
 
@@ -101,12 +102,15 @@ public abstract class User extends BaseEntity {
             this.fullName = fullName.trim();
         }
         if (email != null && !email.trim().isEmpty()) {
-            if (!email.matches("[^@\\s]+@[^@\\s]+\\.[^@\\s]+")) {
+            if (!ValidationUtil.isValidEmail(email)) {
                 throw new IllegalArgumentException("Email khong hop le");
             }
             this.email = email.trim();
         }
         if (phone != null && !phone.trim().isEmpty()) {
+            if (!ValidationUtil.isValidPhone(phone)) {
+                throw new IllegalArgumentException("So dien thoai phai gom 10 chu so va bat dau bang 0");
+            }
             this.phone = phone.trim();
         }
         if (avatar != null && !avatar.trim().isEmpty()) {
@@ -126,6 +130,9 @@ public abstract class User extends BaseEntity {
         }
         if (newRawPassword == null || newRawPassword.length() < 6) {
             throw new IllegalArgumentException("Mat khau moi phai co it nhat 6 ky tu");
+        }
+        if (PasswordUtil.matches(newRawPassword, this.password)) {
+            throw new IllegalArgumentException("Mat khau moi phai khac mat khau cu");
         }
         this.password = PasswordUtil.hash(newRawPassword);
         this.version++;
@@ -148,6 +155,16 @@ public abstract class User extends BaseEntity {
             throw new IllegalStateException("Deleted user cannot be unlocked");
         }
         this.status = UserStatus.ACTIVE;
+        this.version++;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    /** Admin xoa tai khoan (xoa mem): giu ban ghi de con lich su giao dich. */
+    public void markDeleted() {
+        if (this.status == UserStatus.DELETED) {
+            throw new IllegalStateException("User is already deleted");
+        }
+        this.status = UserStatus.DELETED;
         this.version++;
         this.updatedAt = LocalDateTime.now();
     }
@@ -185,8 +202,8 @@ public abstract class User extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.username, this.password, this.fullName, this.email, this.phone,
-                this.avatar, getRole(), this.status, this.version, this.createdAt, this.updatedAt);
+        return CsvUtil.join(this.getId(), this.username, this.password, this.fullName, this.email, this.phone,
+                this.avatar, this.getRole(), this.status, this.version, this.createdAt, this.updatedAt);
     }
 
     public static User fromCsvLine(String csvLine) {
@@ -205,6 +222,6 @@ public abstract class User extends BaseEntity {
     @Override
     public String toString() {
         return String.format("%-6s | %-12s | %-22s | %-24s | %-11s | %-6s | %s",
-                getId(), this.username, this.fullName, this.email, this.phone, getRole(), this.status);
+                this.getId(), this.username, this.fullName, this.email, this.phone, this.getRole(), this.status);
     }
 }

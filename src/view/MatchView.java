@@ -7,7 +7,7 @@ import model.Match;
 public class MatchView extends BaseView {
 
     public void displayMatches(List<Match> matches) {
-        printSection("DANH SACH TRAN DAU");
+        this.printSection("DANH SACH TRAN DAU");
         if (matches.isEmpty()) {
             System.out.println("Khong co tran dau nao.");
             return;
@@ -20,12 +20,12 @@ public class MatchView extends BaseView {
     }
 
     public void displayMatch(Match match) {
-        printSection("THONG TIN TRAN DAU");
+        this.printSection("THONG TIN TRAN DAU");
         System.out.println("Ma tran     : " + match.getId());
         System.out.println("Ten tran    : " + match.getName());
         System.out.println("Giai dau    : " + match.getCompetition());
-        System.out.println("Doi nha     : " + (match.getHomeTeam() == null ? match.getHomeTeamId() : match.getHomeTeam()));
-        System.out.println("Doi khach   : " + (match.getAwayTeam() == null ? match.getAwayTeamId() : match.getAwayTeam()));
+        System.out.println("Doi nha     : " + (match.getHomeTeam() == null ? match.getHomeTeamId() : match.getHomeTeam().getName()));
+        System.out.println("Doi khach   : " + (match.getAwayTeam() == null ? match.getAwayTeamId() : match.getAwayTeam().getName()));
         System.out.println("Ngay        : " + match.getMatchDate());
         System.out.println("Gio         : " + match.getStartTime());
         if (match.getStadium() != null) {

@@ -11,13 +11,13 @@ public class ETicketRepository extends CsvRepository<ETicket> {
     }
 
     @Override
-    protected ETicket parse(String line) {
+    public ETicket parse(String line) {
         return ETicket.fromCsvLine(line);
     }
 
     public List<ETicket> findByUserId(String userId) {
         List<ETicket> result = new ArrayList<>();
-        for (ETicket t : findAll()) {
+        for (ETicket t : this.findAll()) {
             if (t.getUserId().equalsIgnoreCase(userId)) {
                 result.add(t);
             }
@@ -27,7 +27,7 @@ public class ETicketRepository extends CsvRepository<ETicket> {
 
     public List<ETicket> findByBookingId(String bookingId) {
         List<ETicket> result = new ArrayList<>();
-        for (ETicket t : findAll()) {
+        for (ETicket t : this.findAll()) {
             if (t.getBookingId().equalsIgnoreCase(bookingId)) {
                 result.add(t);
             }
@@ -36,7 +36,7 @@ public class ETicketRepository extends CsvRepository<ETicket> {
     }
 
     public ETicket findByQrCode(String qrCode) {
-        for (ETicket t : findAll()) {
+        for (ETicket t : this.findAll()) {
             if (qrCode.trim().equalsIgnoreCase(t.getQrCode())) {
                 return t;
             }

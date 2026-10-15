@@ -62,7 +62,7 @@ public class TicketController {
 
     /** Khoa: getLatestTicket. */
     public ETicket getLatestTicket(User user) {
-        List<ETicket> list = getTicketsOfUser(user);
+        List<ETicket> list = this.getTicketsOfUser(user);
         return list.isEmpty() ? null : list.get(0);
     }
 

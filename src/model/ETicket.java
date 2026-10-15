@@ -38,15 +38,15 @@ public class ETicket extends BaseEntity {
     /** Trieu: Ticket.generateQr. */
     public String generateQr() {
         if (this.qrCode == null) {
-            this.qrCode = "TICKET-" + getId() + "-" + this.bookingId + "-"
-                    + Integer.toHexString((getId() + this.bookingId + this.issueDate).hashCode()).toUpperCase();
+            this.qrCode = "TICKET-" + this.getId() + "-" + this.bookingId + "-"
+                    + Integer.toHexString((this.getId() + this.bookingId + this.issueDate).hashCode()).toUpperCase();
         }
         return this.qrCode;
     }
 
     /** Trieu: Ticket.viewTicket. */
     public String viewTicket() {
-        return "ETicket{id=" + getId() + ", bookingId=" + this.bookingId + ", userId=" + this.userId
+        return "ETicket{id=" + this.getId() + ", bookingId=" + this.bookingId + ", userId=" + this.userId
                 + ", matchId=" + this.matchId + ", seatInfo=" + this.seatInfo + ", status=" + this.status
                 + ", qrCode=" + this.qrCode + "}";
     }
@@ -58,7 +58,7 @@ public class ETicket extends BaseEntity {
 
     /** Soat ve vao cong: ACTIVE -> USED. */
     public void checkIn() {
-        if (!validateTicket()) {
+        if (!this.validateTicket()) {
             throw new IllegalStateException("Ticket is not valid (" + this.status + ")");
         }
         this.status = ETicketStatus.USED;
@@ -84,7 +84,7 @@ public class ETicket extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.bookingId, this.bookingSeatId, this.ticketId, this.userId, this.matchId,
+        return CsvUtil.join(this.getId(), this.bookingId, this.bookingSeatId, this.ticketId, this.userId, this.matchId,
                 this.seatInfo, this.qrCode, this.status, this.issueDate);
     }
 
@@ -103,6 +103,6 @@ public class ETicket extends BaseEntity {
     @Override
     public String toString() {
         return String.format("%-7s | Booking: %-7s | Tran: %-5s | %-26s | %-9s | %s",
-                getId(), this.bookingId, this.matchId, this.seatInfo, this.status, this.qrCode);
+                this.getId(), this.bookingId, this.matchId, this.seatInfo, this.status, this.qrCode);
     }
 }

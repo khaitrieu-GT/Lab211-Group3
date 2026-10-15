@@ -37,7 +37,7 @@ public class AuditLog extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.actorUsername, this.action, this.timestamp, this.statusResult);
+        return CsvUtil.join(this.getId(), this.actorUsername, this.action, this.timestamp, this.statusResult);
     }
 
     public static AuditLog fromCsvLine(String line) {
@@ -50,7 +50,7 @@ public class AuditLog extends BaseEntity {
 
     @Override
     public String toString() {
-        return String.format("%-8s | %s | %-10s | %-7s | %s", getId(),
+        return String.format("%-8s | %s | %-10s | %-7s | %s", this.getId(),
                 this.timestamp == null ? "" : this.timestamp.withNano(0), this.actorUsername, this.statusResult, this.action);
     }
 }

@@ -10,7 +10,7 @@ public class StadiumRepository extends CsvRepository<Stadium> {
     }
 
     @Override
-    protected Stadium parse(String line) {
+    public Stadium parse(String line) {
         return Stadium.fromCsvLine(line);
     }
 }

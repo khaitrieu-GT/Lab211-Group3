@@ -50,7 +50,7 @@ public class Match extends BaseEntity {
         if (this.status == MatchStatus.CANCELLED) {
             throw new IllegalStateException("Cancelled match cannot open sale");
         }
-        if (hasStarted()) {
+        if (this.hasStarted()) {
             throw new IllegalStateException("Match has already started");
         }
         this.status = MatchStatus.OPEN;
@@ -69,7 +69,7 @@ public class Match extends BaseEntity {
     }
 
     public boolean isOnSale() {
-        return this.status == MatchStatus.OPEN && !hasStarted();
+        return this.status == MatchStatus.OPEN && !this.hasStarted();
     }
 
     public LocalDateTime getStartDateTime() {
@@ -77,7 +77,7 @@ public class Match extends BaseEntity {
     }
 
     public boolean hasStarted() {
-        return !LocalDateTime.now().isBefore(getStartDateTime());
+        return !LocalDateTime.now().isBefore(this.getStartDateTime());
     }
 
     public String getName() { return this.name; }
@@ -120,7 +120,7 @@ public class Match extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.name, this.competition, this.homeTeamId, this.awayTeamId, this.stadiumId,
+        return CsvUtil.join(this.getId(), this.name, this.competition, this.homeTeamId, this.awayTeamId, this.stadiumId,
                 this.sellerId, this.matchDate, this.startTime, this.status, this.createdAt);
     }
 
@@ -142,6 +142,6 @@ public class Match extends BaseEntity {
                 : this.homeTeamId + " vs " + this.awayTeamId;
         String place = this.stadium != null ? this.stadium.getName() : this.stadiumId;
         return String.format("%-5s | %-26s | %-34s | %s %s | %-22s | %s",
-                getId(), this.name, teams, this.matchDate, this.startTime, place, this.status);
+                this.getId(), this.name, teams, this.matchDate, this.startTime, place, this.status);
     }
 }

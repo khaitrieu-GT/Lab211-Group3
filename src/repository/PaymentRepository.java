@@ -12,13 +12,13 @@ public class PaymentRepository extends CsvRepository<Payment> {
     }
 
     @Override
-    protected Payment parse(String line) {
+    public Payment parse(String line) {
         return Payment.fromCsvLine(line);
     }
 
     public List<Payment> findByBookingId(String bookingId) {
         List<Payment> result = new ArrayList<>();
-        for (Payment p : findAll()) {
+        for (Payment p : this.findAll()) {
             if (p.getBookingId().equalsIgnoreCase(bookingId)) {
                 result.add(p);
             }
@@ -28,7 +28,7 @@ public class PaymentRepository extends CsvRepository<Payment> {
 
     /** Thanh toan thanh cong (hoac da hoan) cua booking. */
     public Payment findPaidByBookingId(String bookingId) {
-        for (Payment p : findByBookingId(bookingId)) {
+        for (Payment p : this.findByBookingId(bookingId)) {
             if (p.getStatus() == PaymentStatus.SUCCESS || p.getStatus() == PaymentStatus.REFUNDED) {
                 return p;
             }

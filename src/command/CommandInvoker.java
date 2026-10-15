@@ -18,7 +18,7 @@ public class CommandInvoker {
 
     public void runAll(Command... commands) {
         for (Command command : commands) {
-            run(command);
+            this.run(command);
         }
     }
 

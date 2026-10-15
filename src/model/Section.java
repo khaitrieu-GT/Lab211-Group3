@@ -100,7 +100,7 @@ public class Section extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.stadiumId, this.name, this.type, this.capacity, this.basePrice, this.status);
+        return CsvUtil.join(this.getId(), this.stadiumId, this.name, this.type, this.capacity, this.basePrice, this.status);
     }
 
     public static Section fromCsvLine(String csvLine) {
@@ -116,6 +116,6 @@ public class Section extends BaseEntity {
     @Override
     public String toString() {
         return String.format("%-6s | San: %-6s | %-20s | %-8s | Suc chua: %,6d | Gia goc: %s | %s",
-                getId(), this.stadiumId, this.name, this.type, this.capacity, MoneyUtil.format(this.basePrice), this.status);
+                this.getId(), this.stadiumId, this.name, this.type, this.capacity, MoneyUtil.format(this.basePrice), this.status);
     }
 }

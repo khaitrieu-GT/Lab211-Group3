@@ -11,13 +11,13 @@ public class TransactionRepository extends CsvRepository<Transaction> {
     }
 
     @Override
-    protected Transaction parse(String line) {
+    public Transaction parse(String line) {
         return Transaction.fromCsvLine(line);
     }
 
     public List<Transaction> findByPaymentId(String paymentId) {
         List<Transaction> result = new ArrayList<>();
-        for (Transaction t : findAll()) {
+        for (Transaction t : this.findAll()) {
             if (t.getPaymentId().equalsIgnoreCase(paymentId)) {
                 result.add(t);
             }

@@ -33,17 +33,17 @@ public class Seat extends BaseEntity {
     /** Admin khoa ghe (Trieu: Seat.lock). */
     public void lock() {
         if (this.status == SeatStatus.LOCKED) {
-            throw new IllegalStateException("Seat " + getLabel() + " is already locked");
+            throw new IllegalStateException("Seat " + this.getLabel() + " is already locked");
         }
-        updateStatus(SeatStatus.LOCKED);
+        this.updateStatus(SeatStatus.LOCKED);
     }
 
     /** Admin mo khoa ghe (Trieu: Seat.unlock). */
     public void unlock() {
         if (this.status == SeatStatus.AVAILABLE) {
-            throw new IllegalStateException("Seat " + getLabel() + " is already available");
+            throw new IllegalStateException("Seat " + this.getLabel() + " is already available");
         }
-        updateStatus(SeatStatus.AVAILABLE);
+        this.updateStatus(SeatStatus.AVAILABLE);
     }
 
     /** Khanh: Seat.updateStatus - doi trang thai va tang version. */
@@ -82,7 +82,7 @@ public class Seat extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.sectionId, this.rowNumber, this.seatNumber, this.status, this.version);
+        return CsvUtil.join(this.getId(), this.sectionId, this.rowNumber, this.seatNumber, this.status, this.version);
     }
 
     public static Seat fromCsvLine(String csvLine) {
@@ -97,6 +97,6 @@ public class Seat extends BaseEntity {
     @Override
     public String toString() {
         return String.format("%-8s | Khu: %-6s | Ghe %-4s | %-11s | v%d",
-                getId(), this.sectionId, getLabel(), this.status, this.version);
+                this.getId(), this.sectionId, this.getLabel(), this.status, this.version);
     }
 }

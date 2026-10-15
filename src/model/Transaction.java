@@ -60,7 +60,7 @@ public class Transaction extends BaseEntity {
 
     @Override
     public String toCsvLine() {
-        return CsvUtil.join(getId(), this.paymentId, this.gateway, this.transactionNo, this.status,
+        return CsvUtil.join(this.getId(), this.paymentId, this.gateway, this.transactionNo, this.status,
                 this.responseCode, this.createdAt);
     }
 
@@ -78,6 +78,6 @@ public class Transaction extends BaseEntity {
     @Override
     public String toString() {
         return String.format("%-7s | Payment: %-7s | %-13s | So GD: %-22s | Ma: %-3s | %s",
-                getId(), this.paymentId, this.gateway, this.transactionNo, this.responseCode, this.status);
+                this.getId(), this.paymentId, this.gateway, this.transactionNo, this.responseCode, this.status);
     }
 }
