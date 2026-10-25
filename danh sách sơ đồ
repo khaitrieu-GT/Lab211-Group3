@@ -1,0 +1,13 @@
+Danh sách sơ đồ
+Kiến trúc MVC tổng quan — toàn bộ luồng View → Controller → Service → Repository → Model
+Use Case — 11 nhóm chức năng Admin
+Sequence: Menu chính — start() loop theo MVC
+Sequence: Quản lý User — xem/khoá/tạo Seller/xoá qua đúng tầng
+Sequence: Sân/Khu vực/Ghế — validate + repo + audit
+Sequence: Đội bóng — CRUD với kiểm tra trùng/trận đấu
+Sequence: Huỷ vé (phức tạp nhất) — CancellationController, Command Pattern, hoàn tiền
+Sequence: Báo cáo & Audit Log — ReportService + AuditService
+Class Diagram MVC — phân tầng đầy đủ với <<View>>, <<Controller>>, <<Service>>, <<Repository>>, <<Model>>
+State: User — ACTIVE / LOCKED / DELETED
+State: Seat — AVAILABLE / MAINTENANCE / LOCKED / SOLD
+State: CancellationRequest — PENDING / APPROVED / REJECTED
