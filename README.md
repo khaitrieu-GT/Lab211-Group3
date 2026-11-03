@@ -1,6 +1,6 @@
 # Stadium Ticket Booking System
 
-Đồ án LAB211 - Group 3. Hệ thống bán vé sân vận động chạy trên console, viết bằng Java theo mô hình MVC. Dữ liệu được lưu trong các file CSV ở thư mục `data/`, không cần cài cơ sở dữ liệu.
+Dự án LAB211 - Group 3. Hệ thống bán vé sân vận động chạy trên console, viết bằng Java theo mô hình MVC. Dữ liệu được lưu trong các file CSV ở thư mục `data/`, không cần cài cơ sở dữ liệu.
 
 ## Tài khoản đăng nhập
 
@@ -99,6 +99,6 @@ Mỗi file CSV trong `data/` tương ứng với một bảng, ví dụ `users.c
 |---|---|
 | Hồ Lê Hoàng Nhật | Khởi chạy, Admin, sân, khu vực, ghế, đội bóng, nền tảng đọc ghi CSV, dữ liệu mẫu |
 | Ngô Phạm Nguyệt Minh | Đăng nhập, đăng ký, hồ sơ, thông báo, nhật ký hệ thống |
-| Bùi Khải Triều | Đặt vé, giữ ghế, thanh toán, giao dịch |
+| Bùi Khải Triệu | Đặt vé, giữ ghế, thanh toán, giao dịch |
 | Chu Bảo Khánh | Seller, quản lý trận đấu và vé, báo cáo doanh thu |
 | Đặng Đăng Khoa | Buyer, sơ đồ ghế, vé điện tử, yêu cầu hủy vé |
