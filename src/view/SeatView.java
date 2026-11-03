@@ -24,7 +24,7 @@ public class SeatView extends BaseView {
         System.out.println("Chu thich: [A1 ] trong   [A1 H] dang giu   [A1 X] da ban   [A1 -] khong ban/khoa");
         for (Section section : stadium.getSections()) {
             System.out.println();
-            System.out.println("--- Khu " + section.getId() + ": " + section.getName() + " (" + section.getType() + ")"
+            System.out.println("Khu " + section.getId() + ": " + section.getName() + " (" + section.getType() + ")"
                     + " | Gia goc " + MoneyUtil.format(section.getBasePrice())
                     + (section.isActive() ? "" : " | DONG"));
             Map<String, List<Seat>> rows = new LinkedHashMap<>();
