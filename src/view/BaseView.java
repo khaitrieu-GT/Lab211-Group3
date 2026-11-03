@@ -11,22 +11,18 @@ import java.util.List;
  */
 public abstract class BaseView {
 
-    public static final String LINE = "==========================================================================";
-
     private final ConsoleInput input = ConsoleInput.getInstance();
 
     // ============================ XUAT ============================
 
     public void printHeader(String title) {
         System.out.println();
-        System.out.println(LINE);
         System.out.println("  " + title);
-        System.out.println(LINE);
     }
 
     public void printSection(String title) {
         System.out.println();
-        System.out.println("---------- " + title + " ----------");
+        System.out.println(title);
     }
 
     public void printList(List<?> items, String emptyMessage) {

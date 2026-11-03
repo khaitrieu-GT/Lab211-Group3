@@ -12,7 +12,7 @@ public class TicketView extends BaseView {
     /** Khoa: displayTicket - ve dien tu. */
     public void displayTicket(ETicket ticket, Match match) {
         System.out.println();
-        System.out.println("+------------------------- E-TICKET -------------------------+");
+        System.out.println("E-TICKET");
         System.out.println("  Ma ve      : " + ticket.getId() + "   (Booking " + ticket.getBookingId() + ")");
         if (match != null) {
             System.out.println("  Tran       : " + match.getName() + " - " + match.getCompetition());
@@ -28,7 +28,6 @@ public class TicketView extends BaseView {
         System.out.println("  QR Code    : " + ticket.getQrCode());
         System.out.println("  Ngay phat  : " + ticket.getIssueDate().withNano(0));
         System.out.println("  Trang thai : " + ticket.getStatus());
-        System.out.println("+------------------------------------------------------------+");
     }
 
     public void displayETickets(List<ETicket> tickets) {

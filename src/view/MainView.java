@@ -7,9 +7,7 @@ package view;
 public class MainView extends BaseView {
 
     public void showWelcome() {
-        System.out.println("==================================================");
         System.out.println("  KHOI DONG HE THONG BAN VE SAN VAN DONG (LAB211)");
-        System.out.println("==================================================");
     }
 
     public void showGoodbye() {
