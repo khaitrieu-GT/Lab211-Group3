@@ -1,0 +1,68 @@
+nếu bạn là 1 giảng viên của môn lab này thì bạn đánh giá nội dung của tôi làm như thế nào
+
+Dưới góc độ một giảng viên chấm môn LAB211 (OOP với Java / MVC Architecture), tôi xin đưa ra đánh giá chi tiết về cách bạn phân chia và định hướng nội dung thực hiện cho vị trí TV1 (Admin) dựa trên yêu cầu đề tài và sơ đồ Use Case bạn đã đưa ra:
+
+🌟 1. Điểm mạnh & Ưu điểm vượt trội (Positive Feedback)
+Bao quát đầy đủ phạm vi nghiệp vụ (Scope Coverage):
+
+Sơ đồ Use Case thể hiện rõ vai trò của Admin không chỉ giới hạn ở việc quản lý người dùng (User/Seller) mà còn ôm trọn phần Quản trị Hạ tầng Dữ liệu cốt lõi (Stadium, Section, Seat).   
+Untitled Diagram.drawio.png
++ 1
+
+Sự phân định giữa các chức năng riêng biệt của Admin (Quản lý User, SVD, Khu vực, Ghế, Audit Log...) và chức năng dùng chung với Seller (Đăng bán vé, Giá vé, Doanh thu...) rất rõ ràng và logic.   
+Untitled Diagram.drawio.png
+
+Định hướng kiến trúc chuẩn mực:
+
+Việc xác định chính xác các mô hình Entity (User, Stadium, Section, Seat) và tầng lưu trữ CSV Repository (UserRepository, StadiumRepository, SeatRepository) cho thấy bạn nắm rất vững mô hình MVC và yêu cầu lưu trữ dữ liệu bằng file CSV của đề tài.   
+LAB211_TicketBooking_De_Tai.docx
+
+Thiết lập đúng thuộc tính cốt lõi version trong class Seat cho thấy bạn hiểu mối liên kết kỹ thuật giữa phần việc của Admin và yêu cầu chống Double Booking của TV4.   
+LAB211_TicketBooking_De_Tai.docx
+
+⚠️ 2. Góp ý & Các điểm rủi ro cần lưu ý (Critical Feedback & Risks)
+Nếu không kiểm soát kỹ, công việc của bạn sẽ gặp những rủi ro sau theo tiêu chí Rubric môn học:
+
+Rủi ro quá tải scope (Over-scoping) & Chồng lấn vai trò:
+
+Trong sơ đồ Use Case, Admin ôm cả Quản lý trận đấu, Bán vé, Doanh thu, Đơn hàng... Đứng ở góc độ quản lý dự án, TV1 không nên code trực tiếp các Controller/View liên quan đến Bán vé hay Trận đấu, mà những phần đó là trách nhiệm chính của TV2 (Seller) và TV4 (Booking).   
+Untitled Diagram.drawio.png
++ 1
+
+Lời khuyên: Admin chỉ nên cung cấp dữ liệu cơ sở (CRUD Sân, Khu vực, Ghế, User) và giao diện xem báo cáo/thống kê tổng quan.   
+Untitled Diagram.drawio.png
+
+Cảnh báo về Violate MVC Pattern (Trừ 5% điểm/lỗi):
+
+Trong môi trường console UI trên VS Code, sinh viên rất dễ mắc lỗi gọi trực tiếp SeatRepository từ AdminView hoặc xử lý logic kiểm tra ràng buộc ngay trên màn hình View.
+
+Yêu cầu: Toàn bộ thao tác phải đi đúng luồng: AdminView 
+→ AdminController 
+→ SeatRepository 
+→ seats.csv.
+
+Yêu cầu khắt khe về Hiệu năng (Performance on Big Data):
+
+File seats.csv có tổng số lượng 
+≥10.000 dòng. Khi làm chức năng "Quản lý ghế" (UC23), nếu bạn đọc/ghi toàn bộ file 10.000 dòng mỗi khi cập nhật 1 ghế, chương trình sẽ chạy rất chậm (> 500ms).   
+Untitled Diagram.drawio.png
+
+Gợi ý: Cần tối ưu thuật toán đọc/ghi hoặc caching danh sách ghế trên bộ nhớ RAM ở tầng Repository.
+
+📋 3. Tổng kết Đánh giá & Điểm số dự kiến (Grade Assessment)
+Tiêu chí Rubric	Đánh giá nội dung của TV1	Điểm dự kiến / Trọng số
+1. Decomposition (20%)	
+Phân chia rõ ràng Model, Repository, View riêng cho Admin. Cấu trúc dữ liệu có tính kết nối cao. 
+LAB211_TicketBooking_De_Tai.docx
+
+18 - 20%
+2. Abstraction (15%)	
+Thiết kế các Class Entity chuẩn, thể hiện đầy đủ sơ đồ Use Case và Class Diagram. 
+LAB211_TicketBooking_De_Tai.docx
++ 1
+
+13 - 15%
+3. Algorithm & File I/O (20%)	Thao tác CRUD trên CSV ổn định. Cần lưu ý tối ưu tốc độ đọc file seats.csv 
+≥10k dòng.	16 - 18%
+5. AI Reflection (30%)	Cần ghi chép đầy đủ file member1_ai_log.md trong suốt quá trình code trên VS Code.	27 - 30% (phụ thuộc báo cáo cá nhân)
+👉 Đánh giá chung: Định hướng công việc của bạn rất ĐÚNG ĐẮN, BÁM SÁT ĐỀ TÀI và có tiềm năng đạt điểm giỏi/xuất sắc (8.5 - 9.5+) nếu bạn triển khai code sạch, tuân thủ nghiêm ngặt mô hình MVC và hỗ trợ TV4 tích hợp thành công trường version trên ghế.   
