@@ -1,7 +1,5 @@
 package controller;
 
-import command.CancelBookingCommand;
-import command.CancelTicketCommand;
 import exception.BusinessException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -101,7 +99,7 @@ public class CancellationController {
             throw new BusinessException("Tran dau da dien ra, khong the huy ve/hoan tien. Hay tu choi yeu cau.");
         }
 
-        new CancelTicketCommand(eTicket).execute();
+        eTicket.cancel();
         this.eTicketRepo.update(eTicket);
 
         BookingSeat item = this.bookingSeatRepo.findById(eTicket.getBookingSeatId());
@@ -115,7 +113,7 @@ public class CancellationController {
         Booking booking = this.bookingController.loadBooking(eTicket.getBookingId());
         Payment payment;
         if (booking.getActiveItems().isEmpty() && booking.getStatus() == BookingStatus.CONFIRMED) {
-            new CancelBookingCommand(booking).execute();
+            booking.cancel();
             this.bookingRepo.update(booking);
             payment = this.paymentController.refund(booking.getId(), null);
         } else {

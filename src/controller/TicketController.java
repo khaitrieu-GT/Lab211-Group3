@@ -1,6 +1,5 @@
 package controller;
 
-import command.GenerateTicketQrCommand;
 import exception.BusinessException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +15,7 @@ import repository.ETicketRepository;
 import service.AuditService;
 
 /**
- * Phat hanh, xem va soat ve dien tu (Khoa: TicketController + Trieu: GenerateTicketQrCommand).
+ * Phat hanh, xem va soat ve dien tu (Khoa: TicketController + Trieu: sinh ma QR).
  */
 public class TicketController {
 
@@ -37,7 +36,7 @@ public class TicketController {
             ETicket ticket = new ETicket(null, booking.getId(), item.getId(), item.getTicketId(),
                     booking.getUserId(), booking.getMatchId(), seatInfo);
             this.eTicketRepo.insert(ticket);              // cap id truoc de sinh QR
-            new GenerateTicketQrCommand(ticket).execute();
+            ticket.generateQr();
             this.eTicketRepo.update(ticket);
             issued.add(ticket);
         }
