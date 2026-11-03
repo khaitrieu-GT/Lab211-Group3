@@ -1,10 +1,5 @@
 package controller;
 
-import command.CreatePaymentCommand;
-import command.ProcessTransactionCommand;
-import command.RefundPaymentCommand;
-import command.UpdatePaymentStatusCommand;
-import command.VerifyTransactionCommand;
 import java.math.BigDecimal;
 import java.util.List;
 import model.Booking;
@@ -31,19 +26,19 @@ public class PaymentController {
      */
     public Payment processPayment(Booking booking, PaymentMethod method, boolean approvedByGateway) {
         Payment payment = new Payment(null, booking.getId(), booking.getTotalAmount(), method);
-        new CreatePaymentCommand(payment).execute();
+        payment.createPayment();
         this.paymentRepo.insert(payment);
 
         Transaction transaction = this.gateway.charge(payment, approvedByGateway);
-        new ProcessTransactionCommand(transaction).execute();
+        transaction.process();
         this.transactionRepo.insert(transaction);
         payment.setTransactionId(transaction.getTransactionNo());
 
         try {
-            new VerifyTransactionCommand(transaction).execute();
-            new UpdatePaymentStatusCommand(payment, PaymentStatus.SUCCESS).execute();
+            transaction.verify();
+            payment.updateStatus(PaymentStatus.SUCCESS);
         } catch (IllegalStateException ex) {
-            new UpdatePaymentStatusCommand(payment, PaymentStatus.FAILED).execute();
+            payment.updateStatus(PaymentStatus.FAILED);
         }
         this.paymentRepo.update(payment);
         return payment;
@@ -58,7 +53,11 @@ public class PaymentController {
         if (payment == null || payment.getStatus() != PaymentStatus.SUCCESS) {
             return null;
         }
-        new RefundPaymentCommand(payment, amount).execute();
+        if (amount == null) {
+            payment.refund();
+        } else {
+            payment.refund(amount);
+        }
         this.paymentRepo.update(payment);
         if (payment.getStatus() == PaymentStatus.REFUNDED) {
             for (Transaction tx : this.transactionRepo.findByPaymentId(payment.getId())) {

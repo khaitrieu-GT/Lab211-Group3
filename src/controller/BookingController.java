@@ -1,17 +1,5 @@
 package controller;
 
-import command.CancelBookingCommand;
-import command.ConfirmBookingCommand;
-import command.CreateBookingCommand;
-import command.CreateHoldCommand;
-import command.LockBookingSeatCommand;
-import command.LockSeatCommand;
-import command.MarkBookingSeatAsSoldCommand;
-import command.MarkSeatAsSoldCommand;
-import command.ReleaseBookingSeatCommand;
-import command.ReleaseHoldCommand;
-import command.UnlockSeatCommand;
-import command.ExtendHoldCommand;
 import exception.BusinessException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -104,7 +92,7 @@ public class BookingController {
 
         // Optimistic locking: chi thanh cong neu chua ai doi ve nay ke tu luc doc
         int expectedVersion = ticket.getVersion();
-        new LockSeatCommand(ticket).execute();
+        ticket.lock();
         if (!this.ticketRepo.updateIfVersionMatches(ticket, expectedVersion)) {
             this.cancelIfEmpty(booking);
             this.auditService.log(user.getUsername(), "HOLD " + ticket.getId() + " (bi tranh cho)", AuditService.FAILED);
@@ -114,12 +102,12 @@ public class BookingController {
         Seat seat = this.seatRepo.findById(ticket.getSeatId());
         String label = seat == null ? ticket.getSeatId() : seat.getLabel();
         BookingSeat item = new BookingSeat(null, booking.getId(), ticket.getId(), label, ticket.getSectionId(), ticket.getPrice());
-        new LockBookingSeatCommand(item).execute();
+        item.lockSeat();
         this.bookingSeatRepo.insert(item);
 
         SeatHold hold = new SeatHold(null, ticket.getId(), user.getId(), booking.getId(),
                 LocalDateTime.now().plusMinutes(AppConfig.HOLD_MINUTES));
-        new CreateHoldCommand(hold).execute();
+        hold.createHold();
         this.holdRepo.insert(hold);
 
         booking.addItem(item);
@@ -140,7 +128,7 @@ public class BookingController {
         booking = this.loadBooking(booking.getId());
         booking.calculateTotal();
         if (booking.getActiveItems().isEmpty()) {
-            new CancelBookingCommand(booking).execute();
+            booking.cancel();
         }
         this.refreshExpiry(booking);
         this.bookingRepo.update(booking);
@@ -148,7 +136,7 @@ public class BookingController {
         return booking;
     }
 
-    /** Gia han giu ghe them vai phut (Trieu: ExtendHoldCommand). */
+    /** Gia han giu ghe them vai phut (Trieu). */
     public Booking extendHold(User user, String bookingId) {
         this.releaseExpiredHolds();
         Booking booking = this.requireOwnPendingBooking(user, bookingId);
@@ -164,7 +152,7 @@ public class BookingController {
             }
         }
         for (SeatHold hold : holds) {
-            new ExtendHoldCommand(hold).execute();
+            hold.extendHold();
             this.holdRepo.update(hold);
         }
         this.refreshExpiry(booking);
@@ -181,7 +169,7 @@ public class BookingController {
         }
         booking = this.loadBooking(bookingId);
         booking.calculateTotal();
-        new CancelBookingCommand(booking).execute();
+        booking.cancel();
         this.bookingRepo.update(booking);
         this.auditService.log(user.getUsername(), "CANCEL_BOOKING " + bookingId, AuditService.SUCCESS);
     }
@@ -226,9 +214,9 @@ public class BookingController {
 
         for (BookingSeat item : booking.getActiveItems()) {
             Ticket ticket = this.ticketRepo.findById(item.getTicketId());
-            new MarkSeatAsSoldCommand(ticket).execute();
+            ticket.markAsSold();
             this.ticketRepo.update(ticket);
-            new MarkBookingSeatAsSoldCommand(item).execute();
+            item.markAsSold();
             this.bookingSeatRepo.update(item);
             SeatHold hold = this.holdRepo.findHoldingByTicket(ticket.getId());
             if (hold != null) {
@@ -241,7 +229,7 @@ public class BookingController {
                 this.holdRepo.update(hold);
             }
         }
-        new ConfirmBookingCommand(booking).execute();
+        booking.confirm();
         this.bookingRepo.update(booking);
 
         List<ETicket> tickets = this.ticketController.createTicket(booking);
@@ -285,12 +273,12 @@ public class BookingController {
             this.holdRepo.update(hold);
             Ticket ticket = this.ticketRepo.findById(hold.getTicketId());
             if (ticket != null && ticket.getStatus() == TicketStatus.HOLD) {
-                new UnlockSeatCommand(ticket).execute();
+                ticket.unlock();
                 this.ticketRepo.update(ticket);
             }
             for (BookingSeat item : this.bookingSeatRepo.findByBookingId(hold.getBookingId())) {
                 if (item.getTicketId().equalsIgnoreCase(hold.getTicketId()) && item.getStatus() == BookingSeatStatus.HOLD) {
-                    new ReleaseBookingSeatCommand(item).execute();
+                    item.releaseSeat();
                     this.bookingSeatRepo.update(item);
                 }
             }
@@ -474,7 +462,7 @@ public class BookingController {
 
     private Booking createBooking(User user, String matchId) {
         Booking booking = new Booking(null, user.getId(), matchId);
-        new CreateBookingCommand(booking).execute();
+        booking.create();
         this.bookingRepo.insert(booking);
         return booking;
     }
@@ -485,14 +473,14 @@ public class BookingController {
         }
         Ticket ticket = this.ticketRepo.findById(item.getTicketId());
         if (ticket != null && ticket.getStatus() == TicketStatus.HOLD) {
-            new UnlockSeatCommand(ticket).execute();
+            ticket.unlock();
             this.ticketRepo.update(ticket);
         }
-        new ReleaseBookingSeatCommand(item).execute();
+        item.releaseSeat();
         this.bookingSeatRepo.update(item);
         SeatHold hold = this.holdRepo.findHoldingByTicket(item.getTicketId());
         if (hold != null && hold.getBookingId().equalsIgnoreCase(item.getBookingId())) {
-            new ReleaseHoldCommand(hold).execute();
+            hold.releaseHold();
             this.holdRepo.update(hold);
         }
     }
@@ -516,7 +504,7 @@ public class BookingController {
 
     private void cancelIfEmpty(Booking booking) {
         if (booking.isPending() && booking.getActiveItems().isEmpty()) {
-            new CancelBookingCommand(booking).execute();
+            booking.cancel();
             this.bookingRepo.update(booking);
         }
     }

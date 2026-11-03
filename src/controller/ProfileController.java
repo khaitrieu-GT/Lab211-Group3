@@ -1,7 +1,5 @@
 package controller;
 
-import command.ChangePasswordCommand;
-import command.UpdateProfileCommand;
 import exception.BusinessException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -13,7 +11,7 @@ import service.NotificationService;
 import view.ProfileView;
 
 /**
- * Ho so ca nhan va thong bao cho moi vai tro (Trieu: UpdateProfileCommand, ChangePasswordCommand;
+ * Ho so ca nhan va thong bao cho moi vai tro (Trieu: cap nhat ho so, doi mat khau;
  * Minh: triggerNotification). Controller dieu khien luong, ProfileView chi nhap/xuat.
  */
 public class ProfileController {
@@ -105,7 +103,7 @@ public class ProfileController {
                 throw new BusinessException("Email da duoc tai khoan khac su dung.");
             }
         }
-        new UpdateProfileCommand(fresh, fullName, email, phone, avatar).execute();
+        fresh.updateProfile(fullName, email, phone, avatar);
         this.userRepo.update(fresh);
         this.auditService.log(fresh.getUsername(), "UPDATE_PROFILE", AuditService.SUCCESS);
         return fresh;
@@ -114,7 +112,7 @@ public class ProfileController {
     public void changePassword(String oldPassword, String newPassword) {
         User fresh = this.getProfile();
         try {
-            new ChangePasswordCommand(fresh, oldPassword, newPassword).execute();
+            fresh.changePassword(oldPassword, newPassword);
         } catch (RuntimeException e) {
             this.auditService.log(fresh.getUsername(), "CHANGE_PASSWORD", AuditService.FAILED);
             throw e;
