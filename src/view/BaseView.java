@@ -16,8 +16,9 @@ public abstract class BaseView {
     // ============================ XUAT ============================
 
     public void printHeader(String title) {
-        System.out.println("===============================================");
+        System.out.println("======================================================");
         System.out.println("  " + title);
+        System.out.println("======================================================");
     }
 
     public void printSection(String title) {
