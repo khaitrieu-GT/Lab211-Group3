@@ -1,0 +1,45 @@
+🏛 Kiến trúc hệ thống: Mô hình MVC (Model - View - Controller)
+Dự án được xây dựng và tuân thủ chặt chẽ theo kiến trúc MVC, áp dụng nguyên lý Separation of Concerns (SoC) nhằm tách biệt rõ ràng giữa logic nghiệp vụ, giao diện người dùng và dữ liệu. Điều này giúp hệ thống dễ dàng bảo trì, mở rộng và làm việc nhóm hiệu quả.
+
+1. Model (Tầng Dữ liệu & Logic nghiệp vụ)
+Đại diện cho phần cốt lõi của ứng dụng, chịu trách nhiệm quản lý cấu trúc dữ liệu, các quy tắc nghiệp vụ và tương tác trực tiếp với cơ sở dữ liệu (File CSV). Tầng Model trong dự án được chia làm 2 phần chính:
+
+Entities (Thực thể): Các lớp mô tả đối tượng dữ liệu như User, AuditLog, Ticket. Các lớp này sử dụng tính Đóng gói (Encapsulation) để bảo vệ dữ liệu thông qua các private attributes và phương thức getter/setter.
+
+Repositories (Kho lưu trữ): Đóng vai trò là Data Access Object (DAO), chịu trách nhiệm thao tác trực tiếp với file vật lý (Đọc/Ghi CSV, thêm, sửa, xóa, tìm kiếm dữ liệu).
+
+2. View (Tầng Giao diện người dùng)
+Chịu trách nhiệm hiển thị thông tin và tương tác với người dùng.
+
+Trong dự án này, View là các lớp quản lý giao diện Console (CLI), sử dụng System.out.print để in các menu chức năng và Scanner để tiếp nhận dữ liệu đầu vào.
+
+Đặc điểm: Tầng View hoàn toàn "ngu ngốc" (Dumb View). Nó chỉ làm nhiệm vụ thu thập đầu vào và hiển thị đầu ra, tuyệt đối không chứa các logic tính toán nghiệp vụ hay truy xuất file.
+
+3. Controller (Tầng Điều khiển)
+Đóng vai trò là "Bộ não" trung tâm, làm cầu nối giao tiếp giữa View và Model.
+
+Nhiệm vụ: Tiếp nhận yêu cầu (Request) từ người dùng thông qua View, xác thực dữ liệu ban đầu, sau đó gọi các phương thức tương ứng ở tầng Model (Repository) để xử lý logic.
+
+Sau khi Model xử lý xong, Controller sẽ lấy kết quả trả về và quyết định xem sẽ gọi View nào tiếp theo để hiển thị kết quả cho người dùng.
+
+🔄 Luồng hoạt động (Data Flow)
+Luồng xử lý một chức năng tiêu biểu trong hệ thống diễn ra theo các bước sau:
+
+Plaintext
+  Người dùng (User) 
+         │ (1) Nhập thao tác (Ví dụ: Đăng nhập)
+         ▼
+     [ VIEW ] ──────(2) Chuyển dữ liệu (username, pass)─────▶ [ CONTROLLER ]
+         ▲                                                           │    ▲
+         │ (5) Hiển thị thông báo (Thành công/Thất bại)              │    │
+         │                                               (3) Xử lý   │    │ (4) Trả dữ liệu
+         └───────────────────────────────────────────────────────────┘    │
+                                                                     ▼    │
+                                                                 [ MODEL ]
+                                                       (Đọc file CSV, xác thực logic)
+💡 Ưu điểm khi áp dụng MVC vào dự án
+Dễ dàng bảo trì và nâng cấp: Do các tầng độc lập với nhau, việc sửa đổi giao diện Console thành giao diện đồ họa (GUI) hoặc Web sau này sẽ chỉ ảnh hưởng đến tầng View, không làm phá vỡ logic nền tảng ở Model và Controller.
+
+Quản lý mã nguồn sạch (Clean Code): Tránh tình trạng "Spaghetti code" (Code rối rắm, gọi chéo nhau lộn xộn). Mỗi file .java chỉ đảm nhận một trách nhiệm duy nhất (Single Responsibility Principle).
+
+Hiệu quả làm việc nhóm: Cho phép các thành viên chia rẽ công việc (Người thiết kế Menu/View, người viết logic ghi File/Model) và code song song mà không bị xung đột (conflict) lẫn nhau.
