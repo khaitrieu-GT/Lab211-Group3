@@ -1,0 +1,845 @@
+
+
+# BÁO CÁO NGHIÊN CỨU MÔ HÌNH MVC
+
+Model – View – Controller
+
+## MỤC LỤC
+
+PHẦN I. TỔNG QUAN VỀ MÔ HÌNH MVC
+
+1. Khái niệm MVC
+2. Mục đích sử dụng MVC
+3. Nguyên tắc Separation of Concerns
+4. Ba thành phần Model – View – Controller
+5. Luồng hoạt động của MVC
+
+PHẦN II. CÁC THÀNH PHẦN VÀ KIẾN TRÚC LIÊN QUAN\
+6\. DTO\
+7\. DAO\
+8\. Repository\
+9\. Service\
+10\. So sánh các thành phần\
+11\. MVC và kiến trúc 3-Layer
+
+PHẦN III. CÁC VẤN ĐỀ KHI ÁP DỤNG MVC\
+12\. Fat Controller\
+13\. Phân tách trách nhiệm\
+14\. Bảo mật\
+15\. Hiệu năng\
+16\. Xử lý đồng thời và Double Booking
+
+PHẦN IV. VÍ DỤ ỨNG DỤNG MVC\
+17\. Java Web – Supplier Management\
+18\. Hệ thống quản lý bán vé sân vận động
+
+PHẦN V. PHÂN TÍCH MVC TRONG DỰ ÁN SELLER (TV2)\
+19\. Vai trò của Seller\
+20\. Model, View, Controller trong Seller\
+21\. Luồng chạy tổng thể\
+22\. Phân tích nghiệp vụ bán vé tại quầy\
+23\. CSV và Repository
+
+PHẦN VI. UML VÀ THIẾT KẾ\
+24\. Quan hệ giữa các lớp\
+25\. Nguyên tắc xây dựng Class Diagram
+
+PHẦN VII. ĐÁNH GIÁ VÀ KẾT LUẬN\
+26\. Ưu điểm\
+27\. Nhược điểm\
+28\. Những nhận định quan trọng\
+29\. Kết luận
+
+# PHẦN I. TỔNG QUAN VỀ MÔ HÌNH MVC
+
+## 1. Khái niệm MVC
+
+MVC là viết tắt của Model – View – Controller.
+
+Đây là một mô hình kiến trúc phần mềm (Architectural Pattern), được sử dụng để tổ chức cấu trúc ứng dụng thành ba thành phần chính:
+
+- Model: Quản lý dữ liệu, trạng thái và nghiệp vụ.
+- View: Hiển thị giao diện và thông tin cho người dùng.
+- Controller: Tiếp nhận yêu cầu và điều phối hoạt động giữa các thành phần.
+
+Mục tiêu của MVC là phân chia trách nhiệm rõ ràng, giúp chương trình dễ phát triển, bảo trì, kiểm thử và mở rộng.
+
+## 2. Tại sao cần sử dụng MVC?
+
+Nếu không tổ chức chương trình theo một kiến trúc rõ ràng, lập trình viên có thể viết tất cả chức năng trong cùng một lớp:
+
+- Hiển thị giao diện.
+- Nhận dữ liệu người dùng.
+- Xử lý nghiệp vụ.
+- Truy vấn dữ liệu.
+- Lưu dữ liệu.
+
+Điều này gây ra nhiều vấn đề:
+
+1. Code khó đọc và khó quản lý.
+2. Khó tìm kiếm và sửa lỗi.
+3. Thay đổi giao diện có thể ảnh hưởng đến nghiệp vụ.
+4. Khó kiểm thử từng chức năng.
+5. Khó mở rộng chương trình.
+6. Nhiều người làm việc cùng lúc dễ xảy ra xung đột code.
+
+MVC giải quyết vấn đề bằng cách phân chia chương trình thành các thành phần có trách nhiệm riêng biệt.
+
+## 3. Separation of Concerns – Phân tách các mối quan tâm
+
+Separation of Concerns (SoC) là nguyên tắc thiết kế phần mềm trong đó mỗi thành phần đảm nhiệm một nhóm nhiệm vụ cụ thể.
+
+Trong MVC:
+
+- Model tập trung vào dữ liệu và nghiệp vụ.
+- View tập trung vào giao diện.
+- Controller tập trung vào điều phối yêu cầu.
+
+Ví dụ: Khi thay đổi giao diện hiển thị danh sách vé, chúng ta chủ yếu cần chỉnh sửa View mà không phải viết lại toàn bộ nghiệp vụ bán vé.
+
+Đây chính là lợi ích quan trọng của việc phân tách trách nhiệm.
+
+## 4. Ba thành phần chính của MVC
+
+### 4.1. Model
+
+Quản lý dữ liệu và nghiệp vụ
+
+Model đại diện cho dữ liệu và trạng thái của ứng dụng.
+
+Các nhiệm vụ:
+
+- Khai báo thuộc tính của đối tượng.
+- Quản lý trạng thái dữ liệu.
+- Cung cấp phương thức xử lý nghiệp vụ liên quan.
+- Kiểm tra các điều kiện hợp lệ của đối tượng.
+- Cung cấp dữ liệu cho các thành phần khác.
+
+Ví dụ trong hệ thống bán vé sân vận động:
+
+| Model   | Ý nghĩa          |
+| ------- | ---------------- |
+| User    | Người dùng       |
+| Seller  | Người bán vé     |
+| Stadium | Sân vận động     |
+| Section | Khu vực khán đài |
+| Seat    | Ghế ngồi         |
+| Match   | Trận đấu         |
+| Ticket  | Vé               |
+| Booking | Đặt vé           |
+| Payment | Thanh toán       |
+
+Ví dụ lớp Ticket:
+
+```
+public class Ticket {
+    private String ticketId;
+    private String matchId;
+    private String seatId;
+    private double price;
+    private String status;
+
+    public boolean isAvailable() {
+        return "AVAILABLE".equals(status);
+    }
+}
+```
+
+Trong đó:
+
+- Các thuộc tính lưu thông tin vé.
+- `isAvailable()` kiểm tra vé có còn khả dụng hay không.
+- Model không trực tiếp hiển thị giao diện cho người dùng.
+
+### 4.2. View
+
+Hiển thị giao diện
+
+View là thành phần chịu trách nhiệm giao tiếp với người dùng thông qua giao diện.
+
+Các nhiệm vụ:
+
+- Hiển thị menu.
+- Hiển thị danh sách dữ liệu.
+- Nhận thông tin nhập từ người dùng.
+- Hiển thị kết quả xử lý.
+- Hiển thị thông báo thành công hoặc thất bại.
+
+Ví dụ:
+
+```
+public class SellerView {
+
+    public void showMenu() {
+        System.out.println("1. Add Match");
+        System.out.println("2. View Match");
+        System.out.println("3. Edit Match");
+        System.out.println("0. Logout");
+    }
+}
+```
+
+View không nên tự xử lý nghiệp vụ phức tạp như tạo trận đấu, tính doanh thu hoặc cập nhật dữ liệu CSV.
+
+### 4.3. Controller
+
+Tiếp nhận và điều phối
+
+Controller đóng vai trò trung gian điều phối giữa View và các thành phần xử lý dữ liệu, nghiệp vụ.
+
+Các nhiệm vụ:
+
+- Nhận yêu cầu từ người dùng.
+- Tiếp nhận dữ liệu đầu vào.
+- Kiểm tra dữ liệu ở mức phù hợp.
+- Gọi Service, Repository hoặc Model cần thiết.
+- Nhận kết quả xử lý.
+- Yêu cầu View hiển thị kết quả.
+
+Ví dụ:
+
+```
+public class SellerController {
+
+    private SellerView sellerView;
+    private MatchRepository matchRepository;
+
+    public void addMatch(Match match) {
+        matchRepository.save(match);
+    }
+}
+```
+
+Trong ví dụ trên, Controller nhận yêu cầu và gọi Repository để lưu trận đấu.
+
+## 5. Luồng hoạt động của MVC
+
+Luồng hoạt động cơ bản:
+
+USER
+
+Người dùng thao tác
+
+VIEW
+
+Hiển thị giao diện và nhận dữ liệu
+
+CONTROLLER
+
+Tiếp nhận và điều phối yêu cầu
+
+MODEL / NGHIỆP VỤ
+
+Xử lý và quản lý dữ liệu
+
+VIEW
+
+Hiển thị kết quả cho người dùng
+
+Trong ứng dụng có thêm Service và Repository, luồng thường được mở rộng:
+
+`User → View → Controller → Service → Repository → Database`
+
+Sau khi xử lý xong, kết quả được trả về để View hiển thị.
+
+### Ví dụ: Người bán thêm một trận đấu
+
+1. Seller chọn chức năng Add Match.
+2. View nhận thông tin trận đấu.
+3. View gửi dữ liệu đến SellerController.
+4. SellerController tiếp nhận yêu cầu và điều phối xử lý.
+5. Service kiểm tra nghiệp vụ nếu được sử dụng.
+6. Repository lưu dữ liệu.
+7. Kết quả được trả về Controller.
+8. Controller yêu cầu View hiển thị thông báo.
+
+# PHẦN II. CÁC THÀNH PHẦN VÀ KIẾN TRÚC LIÊN QUAN
+
+## 6. DTO – Data Transfer Object
+
+DTO là đối tượng truyền dữ liệu giữa các thành phần hoặc các tầng của ứng dụng.
+
+Nhiệm vụ:
+
+- Chứa dữ liệu cần truyền.
+- Giảm việc truyền các đối tượng phức tạp.
+- Chỉ cung cấp những thông tin cần thiết cho một hoạt động.
+- Không chịu trách nhiệm truy vấn Database.
+- Thông thường không chứa nghiệp vụ phức tạp.
+
+Ví dụ:
+
+```
+public class SupplierDTO {
+    private int supplierId;
+    private String supplierName;
+    private String phone;
+
+    public SupplierDTO(int id, String name, String phone) {
+        this.supplierId = id;
+        this.supplierName = name;
+        this.phone = phone;
+    }
+}
+```
+
+## 7. DAO – Data Access Object
+
+DAO là đối tượng truy cập dữ liệu.
+
+DAO chịu trách nhiệm làm việc với cơ sở dữ liệu.
+
+Các nhiệm vụ:
+
+- SELECT: Lấy dữ liệu.
+- INSERT: Thêm dữ liệu.
+- UPDATE: Cập nhật dữ liệu.
+- DELETE: Xóa dữ liệu.
+- Chuyển đổi kết quả truy vấn thành đối tượng.
+
+Ví dụ:
+
+```
+public class SupplierDAO {
+
+    public List<SupplierDTO> getAllSuppliers() {
+        // Truy vấn dữ liệu từ Database
+        // Chuyển kết quả thành DTO
+        return new ArrayList<>();
+    }
+}
+```
+
+## 8. Repository
+
+Repository là thành phần quản lý việc truy xuất và lưu trữ dữ liệu.
+
+Ví dụ:
+
+```
+public class MatchRepository {
+
+    public void save(Match match) {
+        // Lưu Match vào file CSV
+    }
+
+    public List<Match> findAll() {
+        // Đọc danh sách Match từ CSV
+        return new ArrayList<>();
+    }
+}
+```
+
+Repository giúp Controller và Service không cần trực tiếp xử lý chi tiết lưu trữ dữ liệu.
+
+## 9. Service
+
+Service là lớp xử lý nghiệp vụ của ứng dụng.
+
+Nhiệm vụ:
+
+- Thực hiện các quy tắc nghiệp vụ.
+- Kiểm tra điều kiện thực hiện chức năng.
+- Phối hợp nhiều Repository hoặc DAO.
+- Điều phối các bước nghiệp vụ liên quan.
+
+Ví dụ nghiệp vụ bán vé:
+
+- Kiểm tra trận đấu có đang mở bán không.
+- Kiểm tra vé còn khả dụng không.
+- Kiểm tra giới hạn số vé.
+- Thực hiện bán vé.
+- Cập nhật trạng thái và lưu thông tin liên quan.
+
+## 10. So sánh Model, DTO, DAO, Repository và Service
+
+| Thành phần | Trách nhiệm                       |
+| ---------- | --------------------------------- |
+| Model      | Đại diện dữ liệu và nghiệp vụ     |
+| DTO        | Truyền dữ liệu                    |
+| DAO        | Truy cập dữ liệu                  |
+| Repository | Quản lý việc lưu và lấy đối tượng |
+| Service    | Xử lý nghiệp vụ                   |
+| Controller | Điều phối yêu cầu                 |
+| View       | Hiển thị giao diện                |
+
+Điểm cần nhớ:
+
+- DAO và Repository có chức năng tương đồng nhưng không hoàn toàn đồng nhất.
+- DTO không phải Model nghiệp vụ.
+- Service không phải thành phần bắt buộc của MVC.
+- Controller không nên xử lý toàn bộ nghiệp vụ.
+
+## 11. MVC và kiến trúc 3-Layer
+
+MVC và 3-Layer là hai cách tổ chức kiến trúc khác nhau.
+
+MVC gồm:
+
+1. Model.
+2. View.
+3. Controller.
+
+3-Layer gồm:
+
+1. Presentation Layer.
+2. Business Logic Layer.
+3. Data Access Layer.
+
+| MVC            | 3-Layer                         |
+| -------------- | ------------------------------- |
+| View           | Presentation Layer              |
+| Controller     | Thường nằm ở Presentation Layer |
+| Model          | Các đối tượng dữ liệu/nghiệp vụ |
+| Service        | Business Logic Layer            |
+| DAO/Repository | Data Access Layer               |
+
+Hai mô hình có thể kết hợp với nhau.
+
+Ví dụ:
+
+`View → Controller → Service → Repository → Database`
+
+Đây là cách tổ chức phổ biến khi xây dựng ứng dụng có nhiều chức năng.
+
+# PHẦN III. CÁC VẤN ĐỀ KHI ÁP DỤNG MVC
+
+## 12. Fat Controller
+
+Fat Controller là tình trạng Controller chứa quá nhiều code và xử lý quá nhiều nhiệm vụ.
+
+Ví dụ:
+
+```
+public void sellTicket() {
+    // Nhận thông tin người dùng
+    // Kiểm tra vé
+    // Kiểm tra giá
+    // Tính tiền
+    // Cập nhật trạng thái
+    // Lưu dữ liệu
+    // In hóa đơn
+}
+```
+
+Nếu tất cả nghiệp vụ đều nằm trong Controller, chương trình sẽ khó quản lý và bảo trì.
+
+Cách giải quyết:
+
+- Chuyển nghiệp vụ sang Service.
+- Chuyển thao tác dữ liệu sang Repository.
+- Giữ Controller tập trung vào điều phối.
+
+## 13. Phân tách trách nhiệm
+
+| Câu hỏi                                         | Kết luận        |
+| ----------------------------------------------- | --------------- |
+| View có được truy cập Database trực tiếp không? | Không nên       |
+| Model có phải chỉ chứa dữ liệu không?           | Không hoàn toàn |
+| Controller có xử lý toàn bộ nghiệp vụ không?    | Không nên       |
+| Có bắt buộc sử dụng Service không?              | Không           |
+| Có bắt buộc sử dụng DAO không?                  | Không           |
+
+## 14. MVC có đảm bảo bảo mật không?
+
+Không.
+
+MVC chỉ là mô hình tổ chức kiến trúc phần mềm, không phải giải pháp bảo mật hoàn chỉnh.
+
+Ứng dụng vẫn cần:
+
+- Authentication: Xác thực người dùng.
+- Authorization: Phân quyền.
+- Kiểm tra dữ liệu đầu vào.
+- Kiểm soát quyền truy cập.
+- Bảo vệ thông tin nhạy cảm.
+
+## 15. MVC có ảnh hưởng đến hiệu năng không?
+
+MVC có thể tạo thêm một số bước xử lý và lớp trung gian.
+
+Ưu điểm là giúp chương trình dễ bảo trì và mở rộng.
+
+Tuy nhiên, nếu thiết kế không tốt, quá nhiều lớp trung gian hoặc truy vấn dư thừa có thể làm tăng chi phí xử lý.
+
+MVC không tự đảm bảo chương trình chạy nhanh.
+
+## 16. Xử lý đồng thời và Double Booking
+
+Đây là vấn đề quan trọng trong hệ thống bán vé.
+
+Ví dụ:
+
+Hai người cùng chọn ghế A1 cho một trận đấu tại cùng thời điểm.
+
+Nếu không có cơ chế kiểm soát, cả hai có thể cùng được xác nhận mua một ghế.
+
+Các giải pháp:
+
+- Seat Lock / Seat Hold: Khóa hoặc giữ ghế tạm thời.
+- Transaction: Giao dịch có kiểm soát.
+- Optimistic Locking: Khóa lạc quan.
+- Kiểm tra trạng thái ghế trước khi xác nhận.
+- Chống xử lý yêu cầu trùng lặp.
+
+Kết luận: MVC chỉ tổ chức luồng xử lý, không tự giải quyết vấn đề Double Booking.
+
+# PHẦN IV. VÍ DỤ ỨNG DỤNG MVC
+
+## 17. Ví dụ Java Web – Supplier Management
+
+Một dự án Java Web sử dụng MVC có thể tổ chức như sau:
+
+```
+SupplierManagement/
+│
+├── Controller/
+│   └── SupplierServlet.java
+│
+├── DAO/
+│   └── SupplierDAO.java
+│
+├── DTO/
+│   └── SupplierDTO.java
+│
+└── View/
+    └── list.jsp
+```
+
+Trong đó:
+
+- SupplierServlet: Controller.
+- list.jsp: View.
+- SupplierDTO: Đối tượng truyền dữ liệu.
+- SupplierDAO: Truy vấn Database.
+
+### Luồng xem danh sách Supplier
+
+1. Người dùng truy cập trang danh sách.
+2. SupplierServlet tiếp nhận request.
+3. Servlet gọi SupplierDAO.
+4. DAO truy vấn Database.
+5. DAO trả danh sách SupplierDTO.
+6. Controller chuyển dữ liệu cho JSP.
+7. JSP hiển thị danh sách.
+
+### Luồng xóa Supplier
+
+1. Người dùng chọn Delete.
+2. Request gửi đến SupplierServlet.
+3. Servlet nhận Supplier ID.
+4. Controller gọi DAO.
+5. DAO thực hiện DELETE.
+6. Controller chuyển hướng hoặc trả kết quả về View.
+
+## 18. Ví dụ hệ thống quản lý bán vé sân vận động
+
+Đây là ví dụ trọng tâm đã được nghiên cứu.
+
+Các Model:
+
+- User.
+- Seller.
+- Stadium.
+- Section.
+- Seat.
+- Match.
+- Ticket.
+- Booking.
+- Payment.
+
+Các chức năng:
+
+- Quản lý trận đấu.
+- Quản lý vé.
+- Tìm kiếm trận đấu.
+- Chọn ghế.
+- Giữ ghế.
+- Đặt vé.
+- Thanh toán.
+- Quản lý doanh thu.
+
+MVC giúp phân chia giao diện, điều phối yêu cầu và quản lý dữ liệu/nghiệp vụ của toàn hệ thống.
+
+# PHẦN V. PHÂN TÍCH MVC TRONG DỰ ÁN SELLER (TV2)
+
+## 19. Vai trò của Seller
+
+Trong dự án nhóm quản lý bán vé sân vận động, TV2 – Seller phụ trách các chức năng:
+
+- Quản lý trận đấu.
+- Quản lý vé.
+- Thiết lập giá vé.
+- Quản lý số lượng vé.
+- Quản lý đơn hàng.
+- Bán vé.
+- Quản lý doanh thu.
+- Lịch sử bán vé.
+
+## 20. Model, View và Controller trong Seller
+
+### 20.1. Model
+
+Các Model liên quan:
+
+| Model   | Vai trò             |
+| ------- | ------------------- |
+| Seller  | Thông tin người bán |
+| Match   | Thông tin trận đấu  |
+| Ticket  | Thông tin vé        |
+| Section | Khu vực khán đài    |
+| Seat    | Ghế ngồi            |
+| Booking | Thông tin đặt vé    |
+| ETicket | Vé điện tử          |
+
+Một số phương thức của Match:
+
+```
+openSale()
+closeSale()
+cancel()
+isOnSale()
+hasStarted()
+getStartDateTime()
+```
+
+Một số phương thức của Seat:
+
+```
+lock()
+unlock()
+updateStatus()
+isAvailable()
+getLabel()
+```
+
+Một số phương thức thống kê được đề xuất cho phần Seller:
+
+```
+getTotalRevenue()
+getRevenueByMatch(int matchId)
+getSoldTickets(int matchId)
+getAvailableTickets(int matchId)
+```
+
+Lưu ý: Các phương thức thống kê có thể được triển khai ở Service hoặc Repository tùy thiết kế, không nhất thiết phải đặt trong Model.
+
+### 20.2. View – SellerView
+
+Theo code đã trao đổi, `SellerView` kế thừa `BaseView`.
+
+Nhiệm vụ:
+
+- Hiển thị menu Seller.
+- Nhận lựa chọn.
+- Hiển thị danh sách trận đấu.
+- Hiển thị thông tin vé.
+- Hiển thị lịch sử bán vé.
+- Hiển thị báo cáo doanh thu.
+- Hiển thị thông báo kết quả.
+
+Menu Seller đã phân tích:
+
+| Lựa chọn | Chức năng                              |
+| -------- | -------------------------------------- |
+| 1–4      | Thêm, xem, sửa, xóa trận đấu           |
+| 5–6      | Mở bán, đóng bán                       |
+| 7–11     | Tạo, xem, sửa, dừng hoặc mở lại bán vé |
+| 12       | Bán vé tại quầy                        |
+| 13       | QR Check-in                            |
+| 14       | Báo cáo doanh thu                      |
+| 15       | Lịch sử bán vé                         |
+| 16       | Thông báo                              |
+| 17       | Hồ sơ                                  |
+| 18       | Xóa vé                                 |
+| 0        | Đăng xuất                              |
+
+### 20.3. Controller – SellerController
+
+SellerController là thành phần điều phối toàn bộ chức năng Seller.
+
+Các nhiệm vụ:
+
+- Tiếp nhận yêu cầu từ View.
+- Điều phối quản lý trận đấu.
+- Điều phối quản lý vé.
+- Gọi nghiệp vụ bán vé.
+- Gọi các thành phần thống kê doanh thu.
+- Trả kết quả về View.
+
+## 21. Luồng chạy tổng thể của phần Seller
+
+Theo cấu trúc code bạn từng cung cấp:
+
+MainController
+
+Khởi động chương trình, đăng nhập và xác định vai trò.
+
+SellerController
+
+Tiếp nhận và điều phối chức năng Seller.
+
+SellerView
+
+Hiển thị menu và kết quả.
+
+Model / Service / Repository
+
+Xử lý nghiệp vụ, quản lý đối tượng và đọc/ghi dữ liệu.
+
+CSV
+
+Lưu trữ dữ liệu.
+
+Luồng chính:
+
+`MainController → SellerController → SellerView`
+
+Sau đó Controller gọi Model, Service hoặc Repository tùy nghiệp vụ.
+
+Điểm quan trọng: `SellerView` chỉ hiển thị menu và kết quả; nghiệp vụ được điều phối bởi `SellerController`.
+
+## 22. Phân tích nghiệp vụ bán vé tại quầy
+
+Đây là ví dụ thực tế để hiểu MVC hoạt động như thế nào.
+
+Bước 1 – View
+
+Seller chọn chức năng bán vé tại quầy và nhập thông tin trận đấu, ghế.
+
+Bước 2 – Controller
+
+SellerController tiếp nhận yêu cầu.
+
+Bước 3 – Kiểm tra nghiệp vụ
+
+Hệ thống kiểm tra:
+
+- Trận đấu có hợp lệ không?
+- Trận đấu có đang mở bán không?
+- Vé còn khả dụng không?
+- Ghế đã bị giữ hoặc bán chưa?
+- Số lượng vé có vượt giới hạn không?
+
+Bước 4 – Xử lý dữ liệu
+
+Hệ thống thực hiện nghiệp vụ bán vé, tạo Booking và vé điện tử tương ứng theo quy trình thanh toán.
+
+Bước 5 – Lưu trữ
+
+Repository lưu dữ liệu vào các file CSV.
+
+Bước 6 – Trả kết quả
+
+Controller yêu cầu View hiển thị thông báo bán vé thành công hoặc thất bại.
+
+## 23. CSV và Repository
+
+Dự án sử dụng CSV thay vì Database quan hệ.
+
+Repository đảm nhiệm việc đọc và ghi dữ liệu.
+
+Một số file:
+
+| File              | Nội dung             |
+| ----------------- | -------------------- |
+| tickets.csv       | Thông tin vé         |
+| etickets.csv      | Vé điện tử           |
+| bookings.csv      | Thông tin đặt vé     |
+| booking_seats.csv | Ghế thuộc đơn đặt vé |
+
+Cần phân biệt:
+
+- `Ticket`: Vé thuộc trận đấu, quản lý giá, ghế và trạng thái.
+- `ETicket`: Vé điện tử được phát hành cho người mua sau khi thanh toán.
+
+# PHẦN VI. UML VÀ THIẾT KẾ
+
+## 24. Các quan hệ giữa các lớp
+
+| Quan hệ               | Ý nghĩa                                  |
+| --------------------- | ---------------------------------------- |
+| Stadium – Section     | Một sân có nhiều khu vực                 |
+| Section – Seat        | Một khu vực có nhiều ghế                 |
+| Match – Ticket        | Một trận đấu có nhiều vé                 |
+| Ticket – Seat         | Vé gắn với ghế của trận đấu              |
+| Booking – BookingSeat | Một đơn đặt vé có thể có nhiều ghế       |
+| Seller – Match        | Một Seller có thể quản lý nhiều trận đấu |
+
+Một điểm quan trọng trong thiết kế:
+
+Một ghế vật lý có thể được sử dụng trong nhiều trận đấu khác nhau. Do đó, trạng thái bán hoặc giữ ghế phải được quản lý theo từng trận đấu, không nên coi một ghế chỉ có thể gắn với một vé trong toàn hệ thống.
+
+## 25. Nguyên tắc xây dựng Class Diagram
+
+Các nguyên tắc đã được nghiên cứu:
+
+1. Bám sát code thực tế.
+2. Thể hiện thuộc tính và phương thức của từng lớp.
+3. Ghi tên quan hệ trên các đường kết nối.
+4. Thể hiện đúng bội số (Multiplicity).
+5. Thể hiện quan hệ kế thừa và phụ thuộc.
+6. Có thể đưa BaseView vào sơ đồ nếu cần giải thích kế thừa.
+7. Thể hiện Repository và Service khi phạm vi sơ đồ yêu cầu.
+8. Không tự ý thêm hoặc xóa các lớp, bảng so với cấu trúc đã thống nhất.
+
+### Quan hệ Controller – View
+
+Nếu Controller giữ tham chiếu đến View và gọi phương thức của View, có thể biểu diễn bằng quan hệ phụ thuộc hoặc liên kết phù hợp với UML.
+
+Không phải lúc nào quan hệ này cũng là hai chiều.
+
+### Quan hệ Repository – Model
+
+Repository thường phụ thuộc vào Model vì Repository đọc và ghi các đối tượng Model.
+
+Có thể tách Repository thành một sơ đồ riêng nếu Class Diagram chính quá phức tạp.
+
+# PHẦN VII. ĐÁNH GIÁ VÀ KẾT LUẬN
+
+## 26. Ưu điểm của MVC
+
+1. Dễ bảo trì: Mỗi thành phần có trách nhiệm riêng.
+2. Dễ mở rộng: Có thể bổ sung chức năng mà không cần sửa toàn bộ chương trình.
+3. Dễ kiểm thử: Có thể kiểm thử riêng từng thành phần.
+4. Hỗ trợ làm việc nhóm: Nhiều thành viên có thể phát triển các phần khác nhau.
+5. Tái sử dụng: Các thành phần nghiệp vụ và dữ liệu có thể được sử dụng lại.
+
+## 27. Nhược điểm của MVC
+
+Nhược điểm đáng chú ý là làm tăng độ phức tạp và chi phí tổ chức chương trình đối với các ứng dụng nhỏ.
+
+Nguyên nhân:
+
+- Phải tạo nhiều lớp.
+- Phải quản lý các mối quan hệ giữa các thành phần.
+- Luồng xử lý có thể qua nhiều bước.
+- Nếu phân chia không hợp lý, chương trình khó theo dõi.
+
+Ví dụ: Một chương trình chỉ có chức năng cộng hai số không nhất thiết cần xây dựng đầy đủ nhiều lớp MVC.
+
+## 28. Những nhận định quan trọng cần ghi nhớ
+
+| Nhận định                           | Kết luận              |
+| ----------------------------------- | --------------------- |
+| MVC là gì?                          | Architectural Pattern |
+| MVC có bắt buộc Database?           | Không                 |
+| MVC có bắt buộc Service?            | Không                 |
+| MVC có bắt buộc DAO?                | Không                 |
+| Model chỉ chứa dữ liệu?             | Không hoàn toàn       |
+| View truy cập Database trực tiếp?   | Không nên             |
+| Controller xử lý toàn bộ nghiệp vụ? | Không nên             |
+| MVC tự đảm bảo bảo mật?             | Không                 |
+| MVC tự chống Double Booking?        | Không                 |
+| MVC có thể kết hợp 3-Layer?         | Có                    |
+
+## 29. Kết luận
+
+MVC không chỉ đơn thuần là chia ứng dụng thành ba thành phần Model, View và Controller. Giá trị cốt lõi của mô hình nằm ở việc phân chia trách nhiệm hợp lý, giúp chương trình dễ hiểu, dễ kiểm thử, dễ bảo trì và mở rộng.
+
+Khi kết hợp MVC với Service, Repository/DAO và DTO, ứng dụng có thể có cấu trúc rõ ràng hơn. Tuy nhiên, những thành phần này cần được sử dụng theo nhu cầu thực tế, không nên tạo thêm lớp một cách máy móc.
+
+Trong dự án quản lý bán vé sân vận động, MVC giúp tổ chức giao diện, điều phối chức năng và quản lý dữ liệu/nghiệp vụ. Riêng phần Seller, MainController điều hướng người dùng đến SellerController, SellerView hiển thị menu và kết quả, còn các nghiệp vụ được điều phối qua Controller và các thành phần liên quan.
+
+Những vấn đề như giữ ghế, thanh toán và chống đặt trùng cần có cơ chế nghiệp vụ và kiểm soát dữ liệu riêng, không thể giải quyết chỉ bằng MVC.
+
